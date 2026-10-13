@@ -1,0 +1,10 @@
+# Thư viện chạy ứng dụng Trụ ADN (Flask + mô phỏng + chatbot Gemini).
+# Phiên bản trùng với bản đã chạy và kiểm thử trên Python 3.13.
+Flask==3.1.3
+python-dotenv==1.2.4
+google-genai==2.29.0
+
+# Máy chủ production cho Linux (Render, Railway...). Không cần và không chạy trên Windows.
+# Lệnh chạy khuyến nghị (chỉ 1 worker vì mô phỏng giữ trạng thái trong bộ nhớ):
+#   gunicorn app:app --workers 1 --threads 4
+gunicorn>=23.0.0; sys_platform != "win32"
