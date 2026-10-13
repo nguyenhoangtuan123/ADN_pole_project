@@ -1,0 +1,412 @@
+/* ==========================================================================
+   nav.css – Thanh điều hướng & thanh mục lục dùng chung
+   Tải trên cả hai trang: index.html và dashboard.html
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Skip Link (Bỏ qua điều hướng – accessibility)
+   -------------------------------------------------------------------------- */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 12px;
+  z-index: 9999;
+  padding: 10px 18px;
+  background: #2e7d32;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border-radius: 0 0 10px 10px;
+  text-decoration: none;
+  transition: top 0.15s ease;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Thanh điều hướng chính (site-nav)
+   -------------------------------------------------------------------------- */
+.site-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  padding: 0 20px;
+  background: linear-gradient(90deg, #1b5e20, #2e7d32);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(27, 94, 32, 0.25);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  gap: 16px;
+}
+
+/* Logo / Brand */
+.site-nav__logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #ffffff;
+  flex-shrink: 0;
+  border-radius: 8px;
+  padding: 4px 2px;
+  transition: opacity 0.2s;
+}
+.site-nav__logo:hover { opacity: 0.88; }
+.site-nav__logo:focus-visible {
+  outline: 2px solid rgba(255,255,255,0.85);
+  outline-offset: 3px;
+}
+
+.site-nav__logo-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.site-nav__logo-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: #ffffff;
+}
+
+.site-nav__logo-text {
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+.site-nav__logo-sub {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 500;
+  opacity: 0.78;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Menu list */
+.site-nav__list {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.site-nav__link {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.82);
+  text-decoration: none;
+  transition: background 0.18s ease, color 0.18s ease;
+  white-space: nowrap;
+  min-height: 44px;
+}
+.site-nav__link svg {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  opacity: 0.85;
+  transition: opacity 0.18s;
+}
+.site-nav__link:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+.site-nav__link:hover svg { opacity: 1; }
+
+.site-nav__link:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.85);
+  outline-offset: 2px;
+}
+
+/* Trạng thái active – trang đang mở */
+.site-nav__link--active {
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  pointer-events: none;
+}
+.site-nav__link--active svg { opacity: 1; }
+
+/* --------------------------------------------------------------------------
+   Thanh mục lục trong trang (page-toc) – chỉ dùng cho dashboard
+   -------------------------------------------------------------------------- */
+.page-toc {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 16px;
+  height: 44px;
+  background: #ffffff;
+  border-bottom: 1px solid #dbe5d8;
+  position: sticky;
+  top: 56px; /* ngay dưới site-nav */
+  z-index: 190;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.page-toc::-webkit-scrollbar { display: none; }
+
+.page-toc__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 13px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #5f6e5e;
+  text-decoration: none;
+  white-space: nowrap;
+  min-height: 36px;
+  transition: background 0.18s ease, color 0.18s ease;
+  border: 1px solid transparent;
+}
+.page-toc__item svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  opacity: 0.75;
+}
+.page-toc__item:hover {
+  background: #e8f5e9;
+  color: #1b5e20;
+}
+.page-toc__item:focus-visible {
+  outline: 2px solid #2e7d32;
+  outline-offset: 2px;
+}
+.page-toc__item--active {
+  background: #e8f5e9;
+  color: #1b5e20;
+  border-color: #a5d6a7;
+}
+.page-toc__item--active svg { opacity: 1; }
+
+/* --------------------------------------------------------------------------
+   Khu vực "Hỏi AgriBot" trên dashboard
+   -------------------------------------------------------------------------- */
+.agribot-panel {
+  background: #ffffff;
+  border: 1px solid #dbe5d8;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(46, 125, 50, 0.06);
+}
+.agribot-panel__heading {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 5px;
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: #1b5e20;
+}
+.agribot-panel__heading svg {
+  width: 20px;
+  height: 20px;
+  fill: #2e7d32;
+  flex-shrink: 0;
+}
+.agribot-panel__desc {
+  font-size: 0.8rem;
+  color: #5f6e5e;
+  margin: 0 0 12px;
+  line-height: 1.45;
+}
+.agribot-panel__disclaimer {
+  font-size: 0.75rem;
+  color: #5f6e5e;
+  margin: 10px 0 0;
+  padding: 8px 10px;
+  background: #f1f8e9;
+  border-radius: 8px;
+  border-left: 3px solid #66bb6a;
+  line-height: 1.45;
+}
+.agribot-panel__disclaimer a {
+  color: #2e7d32;
+  font-weight: 600;
+}
+
+.agribot-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.agribot-chip {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 10px 13px;
+  background: #f4f8f3;
+  border: 1px solid #dbe5d8;
+  border-radius: 10px;
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: #1f291e;
+  text-decoration: none;
+  line-height: 1.4;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.15s ease;
+}
+.agribot-chip:hover {
+  background: #e8f5e9;
+  border-color: #a5d6a7;
+  transform: translateX(2px);
+}
+.agribot-chip:focus-visible {
+  outline: 2px solid #2e7d32;
+  outline-offset: 2px;
+}
+.agribot-chip svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  stroke: #2e7d32;
+  margin-top: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Thông báo ngữ cảnh nhỏ trên trang chatbot
+   -------------------------------------------------------------------------- */
+.chat-context-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 9px 14px;
+  margin: 0;
+  background: #f1f8e9;
+  border-bottom: 1px solid #c8e6c9;
+  font-size: 0.78rem;
+  color: #5f6e5e;
+  line-height: 1.45;
+  flex-shrink: 0;
+}
+.chat-context-notice svg {
+  width: 15px;
+  height: 15px;
+  stroke: #2e7d32;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.chat-context-notice a {
+  color: #2e7d32;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive – điện thoại (≤ 640px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .site-nav {
+    height: 52px;
+    padding: 0 12px;
+    gap: 8px;
+  }
+  .site-nav__logo-text {
+    font-size: 0.9rem;
+  }
+  .site-nav__logo-sub {
+    display: none;
+  }
+  .site-nav__link {
+    padding: 8px 11px;
+    font-size: 0.82rem;
+    gap: 5px;
+  }
+  /* Ẩn nhãn chữ, chỉ giữ icon trên màn hình rất nhỏ */
+  @media (max-width: 380px) {
+    .site-nav__link-label {
+      display: none;
+    }
+    .site-nav__link {
+      padding: 10px;
+      border-radius: 50%;
+    }
+  }
+
+  .page-toc {
+    top: 52px;
+    padding: 0 10px;
+    gap: 2px;
+  }
+  .page-toc__item {
+    font-size: 0.78rem;
+    padding: 5px 10px;
+  }
+
+  .agribot-panel {
+    border-radius: 12px;
+    padding: 14px;
+  }
+}
+
+/* prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .site-nav__link,
+  .site-nav__logo,
+  .agribot-chip,
+  .page-toc__item {
+    transition: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Nhãn dữ liệu mô phỏng + tiêu đề trang (dashboard)
+   -------------------------------------------------------------------------- */
+.sim-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  max-width: 1280px;
+  margin: 12px auto 0;
+  padding: 12px 16px;
+  background: #fffde7;
+  border: 1px solid #f0e08a;
+  border-radius: 12px;
+  width: calc(100% - 32px);
+}
+.sim-banner h1 { margin: 0; font-size: 1.1rem; color: #1b5e20; }
+.sim-banner h1 .sub { font-weight: 400; font-size: .95rem; color: #5f6e5e; }
+.sim-banner p { margin: 2px 0 0; font-size: .82rem; color: #5d4500; line-height: 1.45; }
+
+/* --------------------------------------------------------------------------
+   Cuộn tới mục: chừa chỗ cho thanh điều hướng (56px) + mục lục (44px) đang dính ở trên
+   -------------------------------------------------------------------------- */
+[id^="section-"] { scroll-margin-top: 108px; }
+@media (max-width: 640px) {
+  [id^="section-"] { scroll-margin-top: 104px; }
+}
+
+/* --------------------------------------------------------------------------
+   Chế độ tối cho dải thông báo của trang chatbot (trang chatbot có dark mode)
+   -------------------------------------------------------------------------- */
+@media (prefers-color-scheme: dark) {
+  .chat-context-notice {
+    background: #1a251b;
+    border-bottom-color: #2c3e2e;
+    color: #9eb19f;
+  }
+  .chat-context-notice svg { stroke: #81c784; }
+  .chat-context-notice a { color: #81c784; }
+}

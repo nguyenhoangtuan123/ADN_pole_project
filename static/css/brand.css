@@ -1,0 +1,376 @@
+/* ==========================================================================
+   brand.css – Bộ nhận diện TRỤ ADN: "Một góc ban công, một vòng tuần hoàn"
+   Nạp SAU các CSS khác của từng trang để ghi đè biến màu.
+   Bảng màu: xanh đậm #236044 · xanh non #88B95A · kem #F6F4EB · xanh nhạt #DDE8D4 · nâu đất #8A6A4D
+   Phong cách: đồ họa phẳng (không đổ bóng, không chuyển màu), gần gũi làm vườn đô thị.
+   Màu nước (xanh dương) và màu trạng thái (đỏ/cam) giữ nguyên vì mang ý nghĩa dữ liệu.
+   ========================================================================== */
+:root {
+  --brand-deep: #236044;
+  --brand-deep-2: #1B4D37;     /* dẫn xuất: bản đậm hơn để hover / chữ tiêu đề */
+  --brand-leaf: #88B95A;
+  --brand-cream: #F6F4EB;
+  --brand-pale: #DDE8D4;
+  --brand-earth: #8A6A4D;
+  --brand-line: #D3DEC8;       /* dẫn xuất: đường viền nhạt hợp với xanh nhạt */
+
+  /* biến của bảng điều khiển (style.css) */
+  --green: var(--brand-deep);
+  --green-dark: var(--brand-deep-2);
+  --green-soft: var(--brand-pale);
+  --bg: var(--brand-cream);
+  --border: var(--brand-line);
+  --brown: var(--brand-earth);
+  --muted: #5C6A57;
+
+  /* biến của trang chatbot (index.html) */
+  --color-primary: var(--brand-deep);
+  --color-primary-hover: var(--brand-deep-2);
+  --color-primary-light: var(--brand-pale);
+  --color-primary-subtle: #EDF2E4;
+  --color-accent: var(--brand-leaf);
+  --color-bg-app: var(--brand-cream);
+  --color-bg-header: rgba(246, 244, 235, 0.95);
+  --color-border: var(--brand-line);
+  --color-border-hover: #B9CBAA;
+  --color-bubble-bot-border: var(--brand-line);
+  --color-bubble-user: var(--brand-deep);
+  --color-focus: rgba(35, 96, 68, 0.4);
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: 0 6px 18px rgba(35, 96, 68, 0.18);
+}
+
+/* Nền trang: dashboard luôn nền kem (chưa có chế độ tối); trang chatbot theo biến nền sáng/tối của nó */
+body { background: var(--brand-cream); }
+body.page-chat { background: var(--color-bg-app); }
+
+/* ---------------------------------------------------------------- thanh điều hướng
+   Nền xanh đậm phẳng + viền dưới xanh non; logo dùng bản màu nền tối */
+.site-nav {
+  background: var(--brand-deep);
+  box-shadow: none;
+  border-bottom: 3px solid var(--brand-leaf);
+}
+.site-nav__logo-icon { width: auto; height: auto; background: none; border-radius: 0; }
+.site-nav .logo-mark {
+  width: auto;
+  height: 40px;
+  display: block;
+  --lg-leaf-a: var(--brand-cream);
+  --lg-leaf-b: var(--brand-leaf);
+  --lg-s1: var(--brand-pale);
+  --lg-s2: var(--brand-leaf);
+  --lg-ring: var(--brand-cream);
+  --lg-gap: var(--brand-deep);
+  --lg-vein: var(--brand-deep);
+  --lg-vein-b: var(--brand-deep);
+}
+.site-nav__logo-text { font-weight: 900; letter-spacing: 0.07em; font-size: 1.08rem; }
+.site-nav__logo-sub { color: var(--brand-pale); opacity: 0.9; }
+.site-nav__link--active { background: var(--brand-leaf); color: var(--brand-deep-2); }
+.site-nav__link--active svg { opacity: 1; }
+.site-nav__link:hover { background: rgba(246, 244, 235, 0.16); }
+.skip-link { background: var(--brand-deep); }
+
+/* ---------------------------------------------------------------- mục lục trong trang */
+.page-toc { background: var(--brand-cream); border-bottom: 1px solid var(--brand-line); }
+.page-toc__item { color: #4F5E4B; }
+.page-toc__item:hover, .page-toc__item--active { background: var(--brand-pale); color: var(--brand-deep); }
+.page-toc__item--active { border-color: var(--brand-leaf); }
+
+/* ---------------------------------------------------------------- nhãn mô phỏng + tiêu đề trang */
+.brand-tagline {
+  margin: 2px 0 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--brand-earth);
+}
+.sim-banner {
+  position: relative;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid var(--brand-line);
+  border-left: 6px solid var(--brand-earth);
+  border-radius: 14px;
+}
+.sim-banner::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: 170px;
+  background: url(/static/img/pattern-tile.svg) repeat;
+  background-size: 64px 80px;
+  opacity: 0.3;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 60%);
+  mask-image: linear-gradient(90deg, transparent, #000 60%);
+}
+.sim-banner > * { position: relative; z-index: 1; }
+@media (max-width: 760px) {
+  /* khổ hẹp: họa tiết không chồng lên chữ, chuyển thành một dải xoắn ở đáy dải */
+  .sim-banner { padding-bottom: 30px; }
+  .sim-banner::after {
+    inset: auto 0 6px 0;
+    width: auto;
+    height: 18px;
+    background: url(/static/img/helix-tile.svg) repeat-x center;
+    background-size: auto;
+    opacity: 1;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}
+.sim-banner h1 { color: var(--brand-deep); font-weight: 900; letter-spacing: 0.03em; }
+.sim-banner h1 .sub { color: var(--brand-earth); font-weight: 600; letter-spacing: 0; }
+.sim-banner p { color: #5A4632; }
+.sim-banner p.brand-tagline { color: var(--brand-earth); }
+.badge-sim { background: var(--brand-earth); color: var(--brand-cream); }
+
+/* ---------------------------------------------------------------- thẻ, nút, số liệu (phẳng) */
+.card, .chart-card, .agribot-panel { box-shadow: none; border-color: var(--brand-line); border-radius: 16px; }
+.card h2 { color: var(--brand-deep-2); }
+.stat { background: var(--brand-pale); }
+.btn { border-color: var(--brand-line); }
+.btn:hover { background: var(--brand-pale); }
+.btn-primary { background: var(--brand-deep); border-color: var(--brand-deep); color: #fff; }
+.btn-primary:hover { background: var(--brand-deep-2); }
+.chip:hover { background: var(--brand-pale); }
+.chip[aria-pressed="true"] { background: var(--brand-deep); border-color: var(--brand-deep); }
+.charts-head h2, .filter-label { color: var(--brand-deep-2); }
+.footnote { color: #5C6A57; }
+
+/* biểu tượng đầu tiêu đề thẻ (hệ biểu tượng của bộ nhận diện) */
+.card[data-icon] > h2 { display: flex; align-items: center; gap: 10px; }
+.card[data-icon] > h2::before {
+  content: "";
+  width: 32px;
+  height: 32px;
+  flex: none;
+  background: center / contain no-repeat;
+}
+.card[data-icon="leaf-pair"] > h2::before { background-image: url(/static/img/icons/leaf-pair.svg); }
+.card[data-icon="drop"] > h2::before { background-image: url(/static/img/icons/drop.svg); }
+.card[data-icon="sun"] > h2::before { background-image: url(/static/img/icons/sun.svg); }
+.card[data-icon="seedlings"] > h2::before { background-image: url(/static/img/icons/seedlings.svg); }
+.card[data-icon="loop"] > h2::before { background-image: url(/static/img/icons/loop.svg); }
+.card[data-icon="worm"] > h2::before { background-image: url(/static/img/icons/worm.svg); }
+
+/* dải xoắn phân cách */
+.helix-divider {
+  height: 18px;
+  margin: 20px 0 8px;
+  background: url(/static/img/helix-tile.svg) repeat-x center;
+}
+
+/* ---------------------------------------------------------------- khu "Hỏi AgriBot" */
+.agribot-panel { background: #fff; }
+.agribot-panel__heading { color: var(--brand-deep-2); }
+.agribot-panel__heading svg { fill: var(--brand-deep); }
+.agribot-chip { background: var(--brand-cream); border-color: var(--brand-line); color: #1f291e; }
+.agribot-chip:hover { background: var(--brand-pale); border-color: var(--brand-leaf); transform: none; }
+.agribot-chip svg { stroke: var(--brand-deep); }
+.agribot-panel__disclaimer { background: var(--brand-pale); border-left-color: var(--brand-leaf); }
+.agribot-panel__disclaimer a { color: var(--brand-deep); }
+
+/* ---------------------------------------------------------------- sơ đồ Trụ ADN (SVG) */
+.step .box { fill: var(--brand-cream); stroke: var(--brand-earth); }
+.step .soil { fill: var(--brand-earth); opacity: 0.45; }
+.step .plant { fill: var(--brand-leaf); stroke: var(--brand-deep); stroke-width: 1.2; }
+.step:hover .box, .step:focus-visible .box, .step.selected .box { stroke: var(--brand-deep); stroke-width: 3.5; }
+.step .lbl { fill: #1f291e; }
+.strand-title { fill: var(--brand-deep); }
+.box-brown { fill: #EBE1D4; stroke: var(--brand-earth); }
+.svg-label.brown { fill: #5B4632; }
+.valve rect { fill: var(--brand-deep); stroke: var(--brand-deep-2); }
+.pump.on { fill: var(--brand-deep); }
+
+/* ---------------------------------------------------------------- trang chatbot */
+.brand-icon-wrapper { width: 42px; height: 42px; background: none; box-shadow: none; border-radius: 50%; overflow: hidden; }
+.brand-icon-wrapper img { display: block; width: 100%; height: 100%; }
+.avatar-bot { background: var(--brand-deep); box-shadow: none; }
+.welcome-icon { background: var(--brand-pale); color: var(--brand-deep); }
+.welcome-card { box-shadow: none; }
+.welcome-card .brand-tagline { margin: -10px 0 18px; text-align: center; }
+.btn-send { box-shadow: none; }
+.btn-send:disabled { box-shadow: none; }
+.chat-context-notice {
+  background: var(--brand-pale);
+  border-bottom: 1px solid var(--brand-line);
+  color: #4A5A47;
+}
+.chat-context-notice svg { stroke: var(--brand-deep); }
+.chat-context-notice a { color: var(--brand-deep); }
+.chat-context-notice .notice-short { display: none; }
+
+/* ==========================================================================
+   Bố cục trang chatbot: sidebar bên trái + vùng hội thoại rộng bên phải (giống ChatGPT)
+   - Máy tính (≥1024px): khung 95% bề rộng, tối đa 1400px; sidebar 260px
+   - Máy tính bảng (768–1023px): sidebar thu còn 220px
+   - Điện thoại (<768px): khung 100% bề rộng và chiều cao (100dvh), sidebar thành ngăn kéo mở bằng nút menu
+   ========================================================================== */
+.page-chat .chat-shell {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  width: min(95vw, 1400px);
+  margin: 0 auto;
+  position: relative;
+}
+.page-chat .app-layout { flex: 1; min-width: 0; max-width: none; width: auto; margin: 0; }
+.page-chat .chat-context-notice { width: min(95vw, 1400px); max-width: none; align-self: center; box-sizing: border-box; }
+.page-chat .welcome-card { max-width: 760px; }
+.page-chat .message-bubble { max-width: min(85%, 1000px); overflow-wrap: anywhere; }
+.page-chat .markdown-body table { display: block; max-width: 100%; overflow-x: auto; }
+.page-chat .markdown-body pre { max-width: 100%; overflow-x: auto; }
+.page-chat .chat-container { padding-left: 28px; padding-right: 28px; }
+.page-chat .app-header, .page-chat .composer-container { padding-left: 28px; padding-right: 28px; }
+
+/* sidebar */
+.chat-sidebar {
+  flex: 0 0 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 16px 14px;
+  background: var(--color-bg-card);
+  border-right: 1px solid var(--color-border);
+  overflow-y: auto;
+  min-height: 0;
+}
+.chat-sidebar__new {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 14px;
+  font: inherit;
+  font-weight: 700;
+  color: #fff;
+  background: var(--brand-deep);
+  border: 1px solid var(--brand-deep);
+  border-radius: 12px;
+  cursor: pointer;
+}
+.chat-sidebar__new:hover { background: var(--brand-deep-2); }
+.chat-sidebar__new svg { width: 18px; height: 18px; }
+.chat-sidebar__title {
+  margin: 0 0 8px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-light, #8a9989);
+}
+.chat-sidebar__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.chat-sidebar__item {
+  width: 100%;
+  text-align: left;
+  padding: 9px 11px;
+  font: inherit;
+  font-size: 0.84rem;
+  line-height: 1.4;
+  color: var(--color-text-main);
+  background: var(--color-primary-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  cursor: pointer;
+}
+.chat-sidebar__item:hover { background: var(--color-primary-light); border-color: var(--brand-leaf); }
+.chat-sidebar__link {
+  display: block;
+  padding: 9px 11px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+.chat-sidebar__link:hover { background: var(--color-primary-light); }
+.chat-sidebar__note { margin: 0; font-size: 0.75rem; line-height: 1.5; color: var(--color-text-muted); }
+.chat-sidebar__tagline { margin: auto 0 0; font-size: 0.78rem; font-weight: 600; color: var(--brand-earth); }
+.chat-sidebar__new:focus-visible, .chat-sidebar__item:focus-visible, .chat-sidebar__link:focus-visible,
+.sidebar-toggle:focus-visible { outline: 2px solid var(--brand-leaf); outline-offset: 2px; }
+
+/* nút mở menu chỉ có trên điện thoại; trên máy tính nút "Trò chuyện mới" nằm ở sidebar nên ẩn nút cũ trong header */
+.sidebar-toggle { display: none; padding: 8px 10px; }
+.sidebar-toggle svg { width: 20px; height: 20px; stroke: currentColor; }
+.sidebar-backdrop { display: none; }
+@media (min-width: 768px) {
+  .page-chat .app-header #btn-new-chat { display: none; }
+}
+
+/* máy tính bảng */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .page-chat .chat-shell, .page-chat .chat-context-notice { width: 100%; }
+  .chat-sidebar { flex-basis: 220px; padding: 14px 12px; }
+  .page-chat .chat-container, .page-chat .app-header, .page-chat .composer-container { padding-left: 20px; padding-right: 20px; }
+}
+
+/* điện thoại: khung chat chiếm toàn bộ, sidebar là ngăn kéo */
+@media (max-width: 767px) {
+  .page-chat .chat-shell, .page-chat .chat-context-notice { width: 100%; }
+  .page-chat .chat-container, .page-chat .app-header, .page-chat .composer-container { padding-left: 12px; padding-right: 12px; }
+  .sidebar-toggle { display: inline-flex; }
+  .chat-sidebar {
+    position: fixed;
+    top: 52px;
+    bottom: 0;
+    left: 0;
+    z-index: 150;
+    width: min(86vw, 300px);
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition: transform 0.22s ease, visibility 0s linear 0.22s;
+  }
+  .chat-sidebar.is-open { transform: none; visibility: visible; transition: transform 0.22s ease, visibility 0s; }
+  .sidebar-backdrop { position: fixed; inset: 52px 0 0 0; z-index: 140; background: rgba(0, 0, 0, 0.42); }
+  .sidebar-backdrop:not([hidden]) { display: block; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chat-sidebar, .chat-sidebar.is-open { transition: none; }
+}
+
+/* điện thoại: gọn lại để khung chat có chỗ (thanh điều hướng + 1 dòng thông báo + tiêu đề gọn) */
+@media (max-width: 767px) {
+  .chat-context-notice { padding: 7px 12px; }
+  .chat-context-notice .notice-full { display: none; }
+  .chat-context-notice .notice-short { display: inline; }
+  .app-header { height: 50px; }
+  .app-header .brand-icon-wrapper,
+  .app-header .brand-badge { display: none; }
+  .app-header .brand-title { font-size: 0.95rem; }
+}
+
+/* ---------------------------------------------------------------- chế độ tối (chỉ trang chatbot có chế độ tối) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-primary: var(--brand-deep);
+    --color-primary-hover: #2E7A56;
+    --color-primary-light: #1B2E23;
+    --color-primary-subtle: #17261D;
+    --color-accent: var(--brand-leaf);
+    --color-bg-app: #0F1A14;
+    --color-bg-card: #16231B;
+    --color-bg-surface: #1B2B21;
+    --color-bg-header: rgba(22, 35, 27, 0.92);
+    --color-border: #2A3D31;
+    --color-border-hover: #3C5646;
+    --color-bubble-bot: #16231B;
+    --color-bubble-bot-border: #2A3D31;
+    --color-bubble-user: var(--brand-deep);
+    --color-focus: rgba(136, 185, 90, 0.5);
+    --shadow-lg: 0 6px 18px rgba(0, 0, 0, 0.5);
+  }
+  /* thanh cuộn và ô nhập theo chế độ tối (chỉ trang chatbot) */
+  :root:has(body.page-chat) { color-scheme: dark; }
+  .page-chat, .page-chat .chat-container, .page-chat textarea { color-scheme: dark; }
+  .welcome-icon { background: #1B2E23; color: var(--brand-leaf); }
+  .chat-context-notice { background: #17261D; border-bottom-color: #2A3D31; color: #A9B8A8; }
+  .chat-context-notice svg { stroke: var(--brand-leaf); }
+  .chat-context-notice a { color: var(--brand-leaf); }
+  .welcome-card .brand-tagline { color: #C4A484; }
+}

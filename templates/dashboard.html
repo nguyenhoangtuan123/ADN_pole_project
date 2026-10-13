@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Giám sát · Trụ ADN</title>
+  <meta name="description" content="Bảng điều khiển mô phỏng Trụ ADN Ø600 – giám sát, điều khiển bơm/van, lịch hẹn giờ, biểu đồ và nhật ký vận hành (DEMO MODE).">
+  <link rel="stylesheet" href="/static/css/nav.css">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="icon" type="image/svg+xml" href="/static/img/favicon.svg">
+  <link rel="stylesheet" href="/static/css/brand.css">
+</head>
+<body>
+
+  {% set active_page = 'dashboard' %}
+  {% include "_nav.html" %}
+
+  {# Thanh mục lục trong trang #}
+  <nav class="page-toc" aria-label="Mục lục trong trang">
+    <a class="page-toc__item" href="#section-diagram">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+      </svg>
+      Sơ đồ
+    </a>
+    <a class="page-toc__item" href="#section-control">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+        <circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>
+      </svg>
+      Điều khiển
+    </a>
+    <a class="page-toc__item" href="#section-schedule">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+        <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+      Lịch hẹn giờ
+    </a>
+    <a class="page-toc__item" href="#section-charts">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+      Biểu đồ
+    </a>
+    <a class="page-toc__item" href="#section-log">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+      </svg>
+      Nhật ký
+    </a>
+  </nav>
+
+  {# Điểm neo cho skip-link #}
+  <div id="main-content" tabindex="-1" style="outline:none"></div>
+
+  {# Nhãn dữ liệu mô phỏng và tiêu đề trang (h1) #}
+  <header class="sim-banner">
+    <div class="sim-banner__text">
+      <h1>TRỤ ADN Ø600 – 24 bậc <span class="sub">Digital Twin</span></h1>
+      <p class="brand-tagline">Một góc ban công, một vòng tuần hoàn</p>
+      <p>Mô phỏng theo bộ bản vẽ ADN-600 (16 tờ). Hình học lấy từ bản vẽ; các hệ số vật lý là <strong>giả định</strong> và toàn bộ số liệu là <strong>MÔ PHỎNG</strong>, không phải số đo thật.</p>
+    </div>
+    <span class="badge badge-sim" title="Dữ liệu sinh từ mô hình Python, chưa phải số đo thật">DEMO MODE · MÔ PHỎNG</span>
+  </header>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <main class="layout">
+    <!-- ================= SƠ ĐỒ TRỤ ADN ================= -->
+    <section id="section-diagram" class="card diagram-card" aria-label="Sơ đồ Trụ ADN">
+      <h2>Sơ đồ nguyên lý tuần hoàn nước <span class="muted">(2 sợi so le 180° × 12 bậc · bấm vào bậc để xem chi tiết)</span></h2>
+      <svg id="tower" viewBox="0 0 760 1000" role="img" aria-label="Trụ ADN hai sợi A và B, mỗi sợi 12 bậc, nước chảy từ bậc 12 xuống bậc 1 rồi về bể">
+        <!-- Tiêu đề hai sợi -->
+        <text x="250" y="86" text-anchor="middle" class="strand-title">SỢI A</text>
+        <text x="510" y="86" text-anchor="middle" class="strand-title">SỢI B</text>
+
+        <!-- Hộc giun: độc lập, không nối nước với các bậc -->
+        <rect class="box-brown" x="250" y="776" width="260" height="50" rx="8"/>
+        <image href="/static/img/icons/worm.svg" x="258" y="784" width="34" height="34"/>
+        <text x="380" y="797" text-anchor="middle" class="svg-label brown">HỘC GIUN (2 ngăn)</text>
+        <text x="380" y="812" text-anchor="middle" class="svg-tiny">độc lập, không nối nước với các bậc</text>
+
+        <!-- Bể HDPE Ø600 -->
+        <rect class="tank-shell" x="130" y="846" width="500" height="110" rx="10"/>
+        <rect id="tank-water" class="tank-water" x="132" y="954" width="496" height="0"/>
+        <line id="tank-normal" class="tank-normal" x1="132" x2="628" y1="900" y2="900"/>
+        <rect class="tank-outline" x="130" y="846" width="500" height="110" rx="10"/>
+        <text x="160" y="870" class="svg-label blue">BỂ HDPE Ø600</text>
+        <text id="tank-text" x="160" y="886" class="svg-small blue"></text>
+        <text x="620" y="866" text-anchor="end" class="svg-tiny">mức thường 17 L · tối đa 28 L</text>
+
+        <!-- Trụ inox Ø114 (ống mềm chạy bên trong) -->
+        <rect class="axis" x="372" y="44" width="16" height="880" rx="3"/>
+
+        <!-- Đường nước giữa các bậc (dựng bằng JS) -->
+        <g id="pipes"></g>
+
+        <!-- Ống mềm trong trụ: bơm → chữ T -->
+        <path id="hose" class="water-seg hose" d="M430 925 H380 V52"/>
+        <rect id="pump-body" class="pump" x="430" y="908" width="44" height="34" rx="6"/>
+        <text x="452" y="929" class="svg-tiny" text-anchor="middle" fill="#fff">BƠM</text>
+        <circle class="tee" cx="380" cy="52" r="7"/>
+        <text x="396" y="40" class="svg-tiny">T ở Z1440</text>
+
+        <!-- Van A / Van B (dựng bằng JS) -->
+        <g id="valves"></g>
+
+        <!-- 24 bậc (dựng bằng JS) -->
+        <g id="steps"></g>
+      </svg>
+    </section>
+
+    <!-- ================= BẢNG ĐIỀU KHIỂN ================= -->
+    <aside class="side">
+      <section class="card" data-icon="leaf-pair" aria-label="Tổng quan">
+        <h2>Tổng quan</h2>
+        <div class="stats">
+          <div class="stat"><span class="k">Máy bơm</span><span id="s-pump" class="v">–</span></div>
+          <div class="stat"><span class="k">Chế độ</span><span id="s-mode" class="v">–</span></div>
+          <div class="stat"><span class="k">Nước trong bể</span><span id="s-tank" class="v">–</span></div>
+          <div class="stat"><span class="k">Độ ẩm giá thể TB (ước tính)</span><span id="s-avg" class="v">–</span></div>
+          <div class="stat"><span class="k">Tổng đã bơm</span><span id="s-pumped" class="v">–</span></div>
+          <div class="stat"><span class="k">Đã hồi về bể</span><span id="s-recovered" class="v">–</span></div>
+          <div class="stat"><span class="k">Nước mất (cây + bay hơi)</span><span id="s-lost" class="v">–</span></div>
+          <div class="stat"><span class="k">Điện năng (giả lập)</span><span id="s-energy" class="v">–</span></div>
+          <div class="stat"><span class="k">Thời gian bơm</span><span id="s-runtime" class="v">–</span></div>
+          <div class="stat"><span class="k">Giờ mô phỏng</span><span id="s-clock" class="v">–</span></div>
+        </div>
+        <p class="device-line">
+          Bộ điều khiển (ESP32): <strong id="s-device">chưa kết nối (DEMO MODE)</strong> ·
+          lệnh mong muốn: <strong id="s-desired">–</strong> · báo về: <strong id="s-reported">–</strong>
+        </p>
+        <p class="muted small">Bản vẽ không có cảm biến độ ẩm: độ ẩm là ước tính của mô hình. Sai lệch bảo toàn nước: <span id="s-balance">–</span> L (phải ≈ 0).</p>
+      </section>
+
+      <section id="alerts" class="alerts" aria-live="polite"></section>
+
+      <!-- Điều khiển -->
+      <section id="section-control" class="card" data-icon="drop" aria-label="Điều khiển bơm">
+        <h2>Điều khiển bơm &amp; van</h2>
+        <div class="row">
+          <button id="btn-on" class="btn btn-primary">BẬT BƠM</button>
+          <button id="btn-off" class="btn">TẮT BƠM</button>
+          <button id="btn-estop" class="btn btn-danger">DỪNG KHẨN CẤP</button>
+        </div>
+        <div class="row mode-row" role="radiogroup" aria-label="Chế độ điều khiển">
+          <label><input type="radio" name="mode" value="manual"> Thủ công</label>
+          <label><input type="radio" name="mode" value="timer"> Hẹn giờ (theo lịch bên dưới)</label>
+        </div>
+        <div class="row mode-row">
+          <label><input type="checkbox" id="valve-A"> Van A mở</label>
+          <label><input type="checkbox" id="valve-B"> Van B mở</label>
+          <span class="muted small">Đóng cả hai van thì bơm bị chặn.</span>
+        </div>
+        <div class="row">
+          <label class="inline">Tốc độ mô phỏng
+            <select id="speed-select">
+              <option value="1">×1</option>
+              <option value="5">×5</option>
+              <option value="20">×20</option>
+              <option value="60">×60</option>
+              <option value="120">×120</option>
+              <option value="600">×600</option>
+            </select>
+          </label>
+          <button id="btn-refill" class="btn">+ 3 L vào bể</button>
+          <button id="btn-reset" class="btn">Đặt lại</button>
+        </div>
+      </section>
+
+      <!-- Lịch hẹn giờ -->
+      <section id="section-schedule" class="card" data-icon="sun" aria-label="Lịch hẹn giờ">
+        <h2>Lịch hẹn giờ <span class="muted">(giờ mô phỏng)</span></h2>
+        <p id="next-sched" class="muted small">–</p>
+        <ul id="schedules" class="sched-list"></ul>
+        <form id="sched-form" class="sched-form">
+          <label>Giờ bắt đầu<input type="time" name="start" required value="12:00"></label>
+          <label>Thời lượng (phút)<input type="number" name="minutes" min="0.5" step="0.5" required value="4"></label>
+          <button type="submit" class="btn btn-primary">Thêm lịch</button>
+        </form>
+        <p class="muted small">Bản vẽ gợi ý khởi điểm 2–3 lần/ngày, 3–5 phút/lần, hiệu chỉnh theo thử nước và độ ẩm đất. Lịch không được trùng/chồng lấn nhau.</p>
+      </section>
+
+      <section class="card" id="step-detail" data-icon="seedlings" aria-label="Chi tiết bậc">
+        <h2>Chi tiết bậc</h2>
+        <p class="muted">Bấm vào một bậc trên sơ đồ.</p>
+      </section>
+
+      <section class="card" aria-label="Cấu hình">
+        <h2>Cấu hình <span class="muted">(hệ số giả định)</span></h2>
+        <form id="config-form" class="config-grid">
+          <label>Lưu lượng bơm thực tế (L/phút; bản vẽ 100–200 L/h ≈ 1,7–3,3)<input type="number" step="0.1" name="pump_flow_lpm"></label>
+          <label>Công suất bơm (W)<input type="number" step="1" name="pump_power_w"></label>
+          <label>Bơm liên tục tối đa (giây)<input type="number" step="10" name="max_run_s"></label>
+          <label>Mức bể tối thiểu (L)<input type="number" step="0.5" name="min_tank_l"></label>
+          <label>Lưu lượng tối đa cửa nước Ø16 (L/phút)<input type="number" step="0.5" name="door_max_lpm"></label>
+          <label>Hằng số mao dẫn LECA→đất (giây)<input type="number" step="30" name="wick_tau_s"></label>
+          <label>Cây dùng nước mỗi bậc (L/giờ khi bão hòa)<input type="number" step="0.001" name="et_lph"></label>
+          <label>Bay hơi bể (L/giờ)<input type="number" step="0.001" name="tank_evap_lph"></label>
+          <button type="submit" class="btn btn-primary full">Lưu cấu hình</button>
+        </form>
+      </section>
+
+      <!-- Nhật ký -->
+      <section id="section-log" class="card" data-icon="loop" aria-label="Nhật ký">
+        <h2>Nhật ký</h2>
+        <ul id="events" class="events"></ul>
+      </section>
+
+      <!-- Khu vực Hỏi AgriBot -->
+      <section id="section-agribot" class="agribot-panel" aria-label="Hỏi AgriBot về tưới tiêu">
+        <h2 class="agribot-panel__heading">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A9.49 9.49 0 0 0 12 21c7 0 11-8 11-14a1 1 0 0 0-1-1c-2 0-3.5.5-5 2zm-5 11c-2.3 0-4.3-.9-5.7-2.4C8 13.5 11 11.5 16 10c0 4.5-2.5 9-4 9z"/>
+          </svg>
+          Hỏi AgriBot
+        </h2>
+        <p class="agribot-panel__desc">Bấm một câu hỏi để mở AgriBot và điền sẵn nội dung (bạn vẫn tự gửi).</p>
+        <div class="agribot-chips">
+          {# Câu gợi ý đều là câu hỏi chung, khớp với cấu tạo trong bản vẽ ADN-600 #}
+          {% set chips = [
+            "Rau ăn lá nên giữ độ ẩm đất khoảng bao nhiêu?",
+            "Tưới 2–3 lần/ngày, mỗi lần 3–5 phút có hợp lý không?",
+            "Lớp phủ xơ dừa hoặc rơm giúp giữ ẩm mặt đất ra sao?",
+            "Lớp LECA giữ nước dưới đáy khay hoạt động thế nào với rễ rau?"
+          ] %}
+          {% for q in chips %}
+          <a class="agribot-chip" href="/?q={{ q|urlencode }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            {{ q }}
+          </a>
+          {% endfor %}
+        </div>
+        <p class="agribot-panel__disclaimer">
+          ⚠️ AgriBot chưa đọc được số liệu mô phỏng của Trụ ADN. Hãy mô tả số liệu bạn thấy trong câu hỏi khi cần.
+        </p>
+      </section>
+    </aside>
+  </main>
+
+  <!-- ================= BIỂU ĐỒ ================= -->
+  <section id="section-charts" class="charts viz-root" aria-label="Biểu đồ vận hành">
+    <div class="charts-head">
+      <h2>Biểu đồ vận hành <span class="muted">(số liệu mô phỏng, lấy từ cơ sở dữ liệu SQLite)</span></h2>
+      <div class="filter-row" role="group" aria-label="Khoảng thời gian (giờ mô phỏng)">
+        <span class="filter-label">Khoảng thời gian:</span>
+        <button type="button" class="chip" data-window="1800" aria-pressed="false">30 phút</button>
+        <button type="button" class="chip" data-window="7200" aria-pressed="true">2 giờ</button>
+        <button type="button" class="chip" data-window="21600" aria-pressed="false">6 giờ</button>
+        <button type="button" class="chip" data-window="86400" aria-pressed="false">24 giờ</button>
+        <button type="button" class="chip" data-window="0" aria-pressed="false">Tất cả</button>
+        <a class="btn btn-small csv-link" href="/api/export.csv" download>Tải CSV</a>
+      </div>
+    </div>
+    <div class="chart-grid" id="chart-grid"></div>
+  </section>
+
+  <div class="helix-divider" aria-hidden="true"></div>
+
+  <footer class="footnote">
+    Bản vẽ ghi rõ: dữ liệu mô phỏng, chiều dài cắt cuối cùng đo trên lắp thử, chọn cút/lưới/van có tiết diện thông phù hợp.
+    Độ rỗng LECA, độ ẩm bão hòa của giá thể, tốc độ mao dẫn, lượng cây dùng nước và lưu lượng thực tế của bơm là <strong>giả định</strong>, chưa hiệu chỉnh bằng thực nghiệm.
+  </footer>
+
+  <script src="/static/js/charts.js"></script>
+  <script src="/static/js/app.js"></script>
+  <script src="/static/js/nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+{#- templates/_nav.html
+    Partial: Thanh điều hướng dùng chung cho cả hai trang.
+    Cách dùng – đặt trước include:
+        {% set active_page = 'dashboard' %}   (hoặc 'chat')
+        {% include "_nav.html" %}
+-#}
+<a class="skip-link" href="#main-content">Bỏ qua điều hướng</a>
+
+<nav class="site-nav" aria-label="Điều hướng chính">
+  {# --- Logo / Brand --- #}
+  <a class="site-nav__logo" href="/dashboard" aria-label="Trụ ADN – về trang giám sát">
+    <span class="site-nav__logo-icon" aria-hidden="true">
+      {# Dấu hiệu logo Trụ ADN: hai lá, thân xoắn kép, vòng đế #}
+      {% include "_logo_mark.html" %}
+    </span>
+    <span>
+      <span class="site-nav__logo-text">TRỤ ADN</span>
+      <span class="site-nav__logo-sub">Digital Twin</span>
+    </span>
+  </a>
+
+  {# --- Danh sách mục điều hướng --- #}
+  <ul class="site-nav__list" role="list">
+    <li>
+      <a href="/dashboard"
+         class="site-nav__link{% if active_page == 'dashboard' %} site-nav__link--active{% endif %}"
+         {% if active_page == 'dashboard' %}aria-current="page"{% endif %}
+         aria-label="Trụ ADN – giám sát và điều khiển">
+        {# Icon bảng điều khiển #}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <rect x="3" y="3" width="7" height="7" rx="1"/>
+          <rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/>
+          <rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        <span class="site-nav__link-label">Giám sát &amp; Điều khiển</span>
+      </a>
+    </li>
+    <li>
+      <a href="/"
+         class="site-nav__link{% if active_page == 'chat' %} site-nav__link--active{% endif %}"
+         {% if active_page == 'chat' %}aria-current="page"{% endif %}
+         aria-label="Hỏi AgriBot – trợ lý tư vấn nông nghiệp">
+        {# Icon chat bubble #}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        <span class="site-nav__link-label">Hỏi AgriBot</span>
+      </a>
+    </li>
+  </ul>
+</nav>

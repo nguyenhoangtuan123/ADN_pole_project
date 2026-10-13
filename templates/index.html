@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <!-- SỬA #2: Bỏ maximum-scale và user-scalable=no để người dùng có thể phóng to/thu nhỏ linh hoạt -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>AgriBot · Trụ ADN</title>
+  <meta name="description" content="AgriBot – Trợ lý AI tư vấn kỹ thuật canh tác, chẩn đoán sâu bệnh và dinh dưỡng cây trồng cho hệ thống Trụ ADN và nhà nông Việt Nam.">
+
+  <!-- Thư viện Markdown & Sanitize (phiên bản cố định từ cdnjs) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/15.0.7/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.2.4/purify.min.js"></script>
+  <!-- Thanh điều hướng dùng chung -->
+  <link rel="stylesheet" href="/static/css/nav.css">
+
+  <style>
+    /* ==========================================================================
+       1. BIẾN MÀU & THIẾT KẾ (DESIGN TOKENS - HỖ TRỢ LIGHT / DARK MODE)
+       ========================================================================== */
+    :root {
+      /* Tông màu xanh nông nghiệp & nền kem nhạt */
+      --color-primary: #2e7d32;
+      --color-primary-hover: #1b5e20;
+      --color-primary-light: #e8f5e9;
+      --color-primary-subtle: #f1f8e9;
+      --color-accent: #66bb6a;
+
+      --color-bg-app: #f6f8f4;
+      --color-bg-card: #ffffff;
+      --color-bg-surface: #ffffff;
+      --color-bg-header: rgba(255, 255, 255, 0.92);
+
+      --color-text-main: #1f291e;
+      --color-text-muted: #5f6e5e;
+      --color-text-light: #8a9989;
+      --color-text-on-primary: #ffffff;
+
+      --color-border: #e2e8df;
+      --color-border-hover: #c3d2bf;
+
+      --color-bubble-bot: #ffffff;
+      --color-bubble-bot-border: #e3ebd8;
+      --color-bubble-user: #2e7d32;
+      --color-bubble-user-text: #ffffff;
+
+      --color-danger-bg: #fde8e8;
+      --color-danger-border: #f8b4b4;
+      --color-danger-text: #9b1c1c;
+
+      /* SỬA #6: Biến màu cho nút Thử lại hỗ trợ Dark Mode */
+      --color-retry-bg: #ffffff;
+      --color-retry-text: #9b1c1c;
+      --color-retry-hover: #fef2f2;
+
+      --color-focus: rgba(46, 125, 50, 0.45);
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+      --shadow-md: 0 4px 14px rgba(46, 125, 50, 0.08);
+      --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.07);
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+
+      --font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    /* Giao diện Dark Mode theo hệ thống */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --color-primary: #388e3c;
+        --color-primary-hover: #4caf50;
+        --color-primary-light: #182b1b;
+        --color-primary-subtle: #1a251b;
+        --color-accent: #81c784;
+
+        --color-bg-app: #111612;
+        --color-bg-card: #182019;
+        --color-bg-surface: #1e2920;
+        --color-bg-header: rgba(24, 32, 25, 0.92);
+
+        --color-text-main: #e5ece5;
+        --color-text-muted: #9eb19f;
+        --color-text-light: #6e806f;
+        --color-text-on-primary: #ffffff;
+
+        --color-border: #29382b;
+        --color-border-hover: #3d5240;
+
+        --color-bubble-bot: #1c271e;
+        --color-bubble-bot-border: #2c3e2e;
+        --color-bubble-user: #2e7d32;
+        --color-bubble-user-text: #ffffff;
+
+        --color-danger-bg: #321919;
+        --color-danger-border: #5e2626;
+        --color-danger-text: #f8b4b4;
+
+        /* SỬA #6: Biến màu cho nút Thử lại trong Dark Mode */
+        --color-retry-bg: #2a1b1b;
+        --color-retry-text: #f8b4b4;
+        --color-retry-hover: #3d2424;
+
+        --color-focus: rgba(76, 175, 80, 0.5);
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+        --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.35);
+        --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.5);
+      }
+    }
+
+    /* ==========================================================================
+       2. RESET VÀ KHUNG GIAO DIỆN CHÍNH (APP CONTAINER)
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      height: 100%;
+      height: 100dvh;
+      overflow: hidden;
+    }
+    body {
+      height: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background-color: var(--color-bg-app);
+      color: var(--color-text-main);
+      font-family: var(--font-family);
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    /* Thanh site-nav sticky chiếm một phần height, phần còn lại dành cho app-layout */
+    .app-layout {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      max-width: 960px;
+      width: 100%;
+      margin: 0 auto;
+      background-color: var(--color-bg-app);
+      position: relative;
+    }
+
+    /* ==========================================================================
+       3. HEADER CỐ ĐỊNH PHÍA TRÊN
+       ========================================================================== */
+    .app-header {
+      flex-shrink: 0;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      background-color: var(--color-bg-header);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--color-border);
+      z-index: 20;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand-icon-wrapper {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, #2e7d32, #43a047);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 3px 10px rgba(46, 125, 50, 0.25);
+      flex-shrink: 0;
+    }
+
+    .brand-icon-wrapper svg {
+      width: 24px;
+      height: 24px;
+      fill: #ffffff;
+    }
+
+    .brand-meta {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--color-text-main);
+      line-height: 1.25;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--color-primary);
+      margin-top: 2px;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: #2e7d32;
+      box-shadow: 0 0 0 2px var(--color-primary-light);
+      display: inline-block;
+      animation: pulseGreen 2.5s infinite;
+    }
+
+    @keyframes pulseGreen {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.9); }
+    }
+
+    .btn-header {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      font-family: inherit;
+      color: var(--color-text-muted);
+      background-color: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-header:hover {
+      background-color: var(--color-primary-light);
+      color: var(--color-primary);
+      border-color: var(--color-border-hover);
+    }
+
+    /* SỬA #3: Style vô hiệu hóa khi đang chờ bot trả lời */
+    .btn-header:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      border-color: var(--color-border);
+      background-color: var(--color-bg-card);
+      color: var(--color-text-light);
+      box-shadow: none;
+    }
+
+    .btn-header:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+
+    .btn-header svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+    }
+
+    /* ==========================================================================
+       4. KHUNG CHAT & TIN NHẮN (MESSAGE LIST)
+       ========================================================================== */
+    .chat-container {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 20px 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      scroll-behavior: smooth;
+    }
+
+    /* Màn hình chào mừng (Welcome Screen) */
+    .welcome-card {
+      margin: auto auto 20px auto;
+      max-width: 620px;
+      width: 100%;
+      text-align: center;
+      padding: 28px 20px;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .welcome-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--color-primary-light);
+      color: var(--color-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+
+    .welcome-icon svg {
+      width: 32px;
+      height: 32px;
+      fill: currentColor;
+    }
+
+    .welcome-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--color-text-main);
+      margin-bottom: 8px;
+    }
+
+    .welcome-desc {
+      font-size: 0.95rem;
+      color: var(--color-text-muted);
+      line-height: 1.55;
+      margin-bottom: 22px;
+    }
+
+    .suggestions-header {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+      color: var(--color-text-light);
+      margin-bottom: 12px;
+      text-align: left;
+    }
+
+    .suggestions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 10px;
+      text-align: left;
+    }
+
+    .suggestion-chip {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 14px;
+      background-color: var(--color-bg-app);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--color-text-main);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      line-height: 1.4;
+      text-align: left;
+      font-family: inherit;
+    }
+
+    .suggestion-chip:hover {
+      background-color: var(--color-primary-light);
+      border-color: var(--color-accent);
+      color: var(--color-primary-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .suggestion-chip:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 1px;
+    }
+
+    .suggestion-chip svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      stroke: var(--color-primary);
+      margin-top: 1px;
+    }
+
+    /* Các hàng tin nhắn (Message rows) */
+    .message-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      width: 100%;
+      animation: messageSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes messageSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .message-row.user {
+      justify-content: flex-end;
+    }
+
+    .message-row.bot, .message-row.system {
+      justify-content: flex-start;
+    }
+
+    .avatar-bot {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2e7d32, #43a047);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(46, 125, 50, 0.25);
+    }
+
+    .avatar-bot svg {
+      width: 20px;
+      height: 20px;
+      fill: #ffffff;
+    }
+
+    .message-bubble {
+      max-width: 82%;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      word-wrap: break-word;
+      position: relative;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Bong bóng người dùng */
+    .message-row.user .message-bubble {
+      background-color: var(--color-bubble-user);
+      color: var(--color-bubble-user-text);
+      border-bottom-right-radius: 4px;
+      white-space: pre-wrap;
+    }
+
+    /* Bong bóng bot */
+    .message-row.bot .message-bubble {
+      background-color: var(--color-bubble-bot);
+      border: 1px solid var(--color-bubble-bot-border);
+      color: var(--color-text-main);
+      border-bottom-left-radius: 4px;
+    }
+
+    /* Bong bóng thông báo lỗi */
+    .message-bubble.error-bubble {
+      background-color: var(--color-danger-bg);
+      border: 1px solid var(--color-danger-border);
+      color: var(--color-danger-text);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .error-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+    }
+
+    .error-header svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      flex-shrink: 0;
+    }
+
+    .btn-retry {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      /* SỬA #6: Sử dụng biến CSS để hiển thị chuẩn trong cả light và dark mode */
+      background-color: var(--color-retry-bg);
+      color: var(--color-retry-text);
+      border: 1px solid var(--color-danger-border);
+      border-radius: var(--radius-sm);
+      font-size: 0.84rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+
+    .btn-retry:hover {
+      /* SỬA #6: Màu nền hover theo biến CSS */
+      background-color: var(--color-retry-hover);
+    }
+
+    .btn-retry:focus-visible {
+      outline: 2px solid var(--color-danger-text);
+    }
+
+    .btn-retry svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+    }
+
+    /* ==========================================================================
+       5. ĐỊNH DẠNG MARKDOWN TRONG TIN NHẮN BOT
+       ========================================================================== */
+    .markdown-body {
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .markdown-body > *:first-child {
+      margin-top: 0;
+    }
+
+    .markdown-body > *:last-child {
+      margin-bottom: 0;
+    }
+
+    .markdown-body p {
+      margin: 0.5em 0;
+    }
+
+    .markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4 {
+      margin: 0.8em 0 0.35em;
+      color: var(--color-text-main);
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .markdown-body h1 { font-size: 1.25rem; }
+    .markdown-body h2 { font-size: 1.15rem; }
+    .markdown-body h3 { font-size: 1.05rem; }
+    .markdown-body h4 { font-size: 0.98rem; }
+
+    .markdown-body ul, .markdown-body ol {
+      margin: 0.5em 0 0.5em 1.4em;
+      padding: 0;
+    }
+
+    .markdown-body li {
+      margin: 0.3em 0;
+    }
+
+    .markdown-body strong {
+      font-weight: 700;
+      color: var(--color-text-main);
+    }
+
+    .markdown-body em {
+      font-style: italic;
+    }
+
+    .markdown-body a {
+      color: var(--color-primary);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .markdown-body a:hover {
+      color: var(--color-primary-hover);
+    }
+
+    .markdown-body code {
+      background-color: var(--color-bg-app);
+      border: 1px solid var(--color-border);
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-size: 0.88em;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    .markdown-body pre {
+      background-color: var(--color-bg-app);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      overflow-x: auto;
+      margin: 0.6em 0;
+    }
+
+    .markdown-body pre code {
+      background: none;
+      border: none;
+      padding: 0;
+    }
+
+    .markdown-body blockquote {
+      border-left: 3px solid var(--color-accent);
+      padding-left: 10px;
+      margin: 0.6em 0;
+      color: var(--color-text-muted);
+      font-style: italic;
+    }
+
+    .markdown-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.6em 0;
+      font-size: 0.9em;
+    }
+
+    .markdown-body th, .markdown-body td {
+      border: 1px solid var(--color-border);
+      padding: 6px 10px;
+      text-align: left;
+    }
+
+    .markdown-body th {
+      background-color: var(--color-primary-light);
+      font-weight: 600;
+    }
+
+    /* Hiệu ứng 3 chấm nhấp nháy khi đang chờ bot trả lời */
+    .typing-indicator-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .typing-box {
+      background-color: var(--color-bubble-bot);
+      border: 1px solid var(--color-bubble-bot-border);
+      border-radius: var(--radius-md);
+      border-bottom-left-radius: 4px;
+      padding: 12px 18px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--color-text-muted);
+      font-size: 0.88rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .dots-animation {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .dots-animation span {
+      width: 7px;
+      height: 7px;
+      background-color: var(--color-primary);
+      border-radius: 50%;
+      animation: bounceDot 1.4s infinite ease-in-out both;
+    }
+
+    .dots-animation span:nth-child(1) { animation-delay: -0.32s; }
+    .dots-animation span:nth-child(2) { animation-delay: -0.16s; }
+    .dots-animation span:nth-child(3) { animation-delay: 0s; }
+
+    @keyframes bounceDot {
+      0%, 80%, 100% {
+        transform: scale(0.4);
+        opacity: 0.4;
+      }
+      40% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* ==========================================================================
+       6. KHU VỰC NHẬP LIỆU CỐ ĐỊNH PHÍA DƯỚI (INPUT SECTION)
+       ========================================================================== */
+    .composer-container {
+      flex-shrink: 0;
+      background: var(--color-bg-app);
+      padding: 8px 16px 12px;
+      border-top: 1px solid var(--color-border);
+      position: relative;
+      z-index: 20;
+    }
+
+    .composer-card {
+      background-color: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: 8px 12px;
+      box-shadow: var(--shadow-md);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .composer-card:focus-within {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px var(--color-focus);
+    }
+
+    .composer-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+    }
+
+    .input-textarea {
+      flex: 1;
+      border: none;
+      background: transparent;
+      outline: none;
+      resize: none;
+      font-family: inherit;
+      font-size: 1rem; /* >= 16px chống tự zoom trên iOS */
+      line-height: 1.45;
+      color: var(--color-text-main);
+      max-height: 130px;
+      min-height: 24px;
+      padding: 4px 2px;
+      overflow-y: auto;
+    }
+
+    .input-textarea::placeholder {
+      color: var(--color-text-light);
+    }
+
+    .btn-send {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      background-color: var(--color-primary);
+      color: var(--color-text-on-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
+    }
+
+    .btn-send:hover:not(:disabled) {
+      background-color: var(--color-primary-hover);
+      transform: scale(1.04);
+    }
+
+    .btn-send:active:not(:disabled) {
+      transform: scale(0.96);
+    }
+
+    .btn-send:disabled {
+      background-color: var(--color-border);
+      color: var(--color-text-light);
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .btn-send:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+
+    .btn-send svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+      margin-left: 2px; /* Cân chỉnh icon máy bay */
+    }
+
+    .composer-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2px 2px;
+    }
+
+    .char-counter {
+      font-size: 0.76rem;
+      color: var(--color-text-light);
+      font-weight: 500;
+    }
+
+    .char-counter.warning {
+      color: #e65100;
+      font-weight: 600;
+    }
+
+    .char-counter.error {
+      color: #d32f2f;
+      font-weight: 700;
+    }
+
+    .composer-tip {
+      font-size: 0.74rem;
+      color: var(--color-text-light);
+    }
+
+    .disclaimer-text {
+      text-align: center;
+      font-size: 0.74rem;
+      color: var(--color-text-muted);
+      margin-top: 6px;
+      line-height: 1.35;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .disclaimer-text svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--color-text-light);
+      flex-shrink: 0;
+    }
+
+    /* ==========================================================================
+       7. HỘP THOẠI XÁC NHẬN TÙY BIẾN (CONFIRM MODAL)
+       ========================================================================== */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s ease;
+    }
+
+    .modal-backdrop.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-card {
+      background-color: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: var(--shadow-lg);
+      transform: scale(0.92);
+      transition: transform 0.2s ease;
+    }
+
+    .modal-backdrop.active .modal-card {
+      transform: scale(1);
+    }
+
+    .modal-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--color-text-main);
+    }
+
+    .modal-desc {
+      font-size: 0.92rem;
+      color: var(--color-text-muted);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .btn-modal-cancel {
+      padding: 8px 16px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      background-color: var(--color-bg-app);
+      color: var(--color-text-main);
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .btn-modal-confirm {
+      padding: 8px 16px;
+      border: none;
+      border-radius: var(--radius-md);
+      background-color: #d32f2f;
+      color: #ffffff;
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(211, 47, 47, 0.3);
+    }
+
+    .btn-modal-confirm:hover {
+      background-color: #b71c1c;
+    }
+
+    /* ==========================================================================
+       8. RESPONSIVE DÀNH CHO ĐIỆN THOẠI (MOBILE OPTIMIZATIONS)
+       ========================================================================== */
+    @media (max-width: 640px) {
+      .app-header {
+        height: 58px;
+        padding: 0 12px;
+      }
+
+      .brand-title {
+        font-size: 0.96rem;
+      }
+
+      .btn-header-text {
+        display: none; /* Ẩn chữ trên màn hình nhỏ để chừa diện tích */
+      }
+
+      .chat-container {
+        padding: 14px 12px 10px;
+      }
+
+      .message-bubble {
+        max-width: 90%;
+        padding: 10px 14px;
+        font-size: 0.92rem;
+      }
+
+      .suggestions-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .composer-container {
+        padding: 6px 10px calc(8px + env(safe-area-inset-bottom));
+      }
+
+      .composer-tip {
+        display: none;
+      }
+
+      .disclaimer-text {
+        font-size: 0.7rem;
+      }
+    }
+
+    /* ==========================================================================
+       9. ĐẢM BẢO KHÔNG CÓ CUỘN NGANG – khắc phục khi site-nav sticky xuất hiện
+       ========================================================================== */
+    /* site-nav ở ngoài app-layout (ở body flex), nên app-layout cần max-width chuẩn */
+    body {
+      overflow-x: hidden;
+    }
+    .chat-context-notice {
+      flex-shrink: 0;
+      /* Đảm bảo không tạo chiều cao lớn khi max-width: 960px của app-layout */
+      width: 100%;
+      max-width: 960px;
+      align-self: center;
+    }
+  </style>
+  <link rel="icon" type="image/svg+xml" href="/static/img/favicon.svg">
+  <link rel="stylesheet" href="/static/css/brand.css">
+</head>
+<body class="page-chat">
+
+  {% set active_page = 'chat' %}
+  {% include "_nav.html" %}
+
+  <!-- THÔNG BÁO NGỮ CẢNH NHỎ -->
+  <div class="chat-context-notice" role="note" id="main-content">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    <span>
+      <span class="notice-full">AgriBot chưa đọc được số liệu mô phỏng của Trụ ADN. Hãy mô tả số liệu bạn thấy trong câu hỏi.</span>
+      <span class="notice-short">AgriBot chưa đọc được số liệu mô phỏng.</span>
+      <a href="/dashboard">Xem bảng điều khiển →</a>
+    </span>
+  </div>
+
+  <!-- KHUNG CHỨA: sidebar bên trái + vùng hội thoại bên phải -->
+  <div class="chat-shell">
+
+    <!-- SIDEBAR TĨNH (không đổi logic chatbot). Máy tính: cột cố định 260px. Điện thoại: ngăn kéo mở bằng nút menu. -->
+    <aside id="chat-sidebar" class="chat-sidebar" aria-label="Menu AgriBot">
+      <button type="button" id="btn-sidebar-new" class="chat-sidebar__new">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg>
+        Cuộc trò chuyện mới
+      </button>
+
+      <div>
+        <h2 class="chat-sidebar__title">Gợi ý câu hỏi</h2>
+        <ul class="chat-sidebar__list" role="list">
+          {# Bấm vào sẽ điền câu hỏi vào ô nhập (chưa gửi). Các câu khớp với cấu tạo trong bản vẽ Trụ ADN. #}
+          {% for q in [
+            "Rau ăn lá nên giữ độ ẩm đất khoảng bao nhiêu?",
+            "Tưới 2–3 lần/ngày, mỗi lần 3–5 phút có hợp lý không?",
+            "Lớp phủ xơ dừa hoặc rơm giúp giữ ẩm mặt đất ra sao?",
+            "Lớp LECA giữ nước dưới đáy khay hoạt động thế nào với rễ rau?",
+            "Lá rau ăn lá bị vàng có thể do những nguyên nhân nào?"
+          ] %}
+          <li><button type="button" class="chat-sidebar__item" data-q="{{ q }}">{{ q }}</button></li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="chat-sidebar__title">Trụ ADN</h2>
+        <a class="chat-sidebar__link" href="/dashboard">Bảng điều khiển &amp; mô phỏng →</a>
+      </div>
+
+      <p class="chat-sidebar__note">AgriBot chỉ lưu <strong>một</strong> cuộc trò chuyện trên trình duyệt này. Bấm "Cuộc trò chuyện mới" sẽ xóa cuộc hiện tại.</p>
+      <p class="chat-sidebar__tagline">Một góc ban công, một vòng tuần hoàn</p>
+    </aside>
+    <div id="sidebar-backdrop" class="sidebar-backdrop" hidden></div>
+
+  <!-- KHUNG ỨNG DỤNG CHÍNH -->
+  <div class="app-layout">
+
+    <!-- HEADER CỐ ĐỊNH -->
+    <header class="app-header">
+      <div class="brand-section">
+        <!-- Nút mở menu: chỉ hiện trên điện thoại (dưới 768px) -->
+        <button type="button" id="btn-sidebar-toggle" class="btn-header sidebar-toggle" aria-label="Mở menu AgriBot" aria-controls="chat-sidebar" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+        <div class="brand-icon-wrapper" aria-hidden="true">
+          <!-- Huy hiệu tròn của bộ nhận diện Trụ ADN -->
+          <img src="/static/img/favicon.svg" alt="" width="42" height="42">
+        </div>
+        <div class="brand-meta">
+          <h1 class="brand-title">AgriBot – Trợ lý nông nghiệp</h1>
+          <span class="brand-badge">
+            <span class="status-dot" aria-hidden="true"></span>
+            Sẵn sàng tư vấn
+          </span>
+        </div>
+      </div>
+
+      <!-- Nút xóa lịch sử / Cuộc trò chuyện mới -->
+      <button id="btn-new-chat" class="btn-header" aria-label="Bắt đầu cuộc trò chuyện mới">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 12a9 9 0 0 1 15-6.7L21 8"/>
+          <path d="M21 3v5h-5"/>
+          <path d="M21 12a9 9 0 0 1-15 6.7L3 16"/>
+          <path d="M3 21v-5h5"/>
+        </svg>
+        <span class="btn-header-text">Trò chuyện mới</span>
+      </button>
+    </header>
+
+    <!-- VÙNG HIỂN THỊ TIN NHẮN (ARIA-LIVE THÔNG BÁO CHO TRÌNH ĐỌC MÀN HÌNH) -->
+    <main id="chat-messages" class="chat-container" aria-live="polite" aria-label="Nội dung cuộc hội thoại" tabindex="-1"></main>
+
+    <!-- KHU VỰC NHẬP LIỆU CỐ ĐỊNH BÊN DƯỚI -->
+    <footer class="composer-container">
+      <div class="composer-card">
+        <div class="composer-row">
+          <textarea
+            id="user-input"
+            class="input-textarea"
+            rows="1"
+            placeholder="Hỏi về bệnh cây, phân bón, tưới tiêu... (Shift + Enter để xuống dòng)"
+            maxlength="4000"
+            aria-label="Nhập câu hỏi nông nghiệp của bạn"
+          ></textarea>
+
+          <button id="btn-send" class="btn-send" aria-label="Gửi câu hỏi" disabled>
+            <!-- Icon máy bay giấy gửi tin -->
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="composer-meta">
+          <span id="char-counter" class="char-counter">0/4000</span>
+          <span class="composer-tip">Nhấn Enter để gửi</span>
+        </div>
+      </div>
+
+      <!-- Cảnh báo trách nhiệm pháp lý -->
+      <p class="disclaimer-text">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        AgriBot có thể sai sót. Hãy hỏi cán bộ bảo vệ thực vật địa phương trước khi dùng thuốc.
+      </p>
+    </footer>
+
+  </div>
+  </div><!-- /.chat-shell -->
+
+  <!-- MODAL XÁC NHẬN XÓA LỊCH SỬ HỘI THOẠI -->
+  <div id="confirm-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-card">
+      <h2 id="modal-title" class="modal-title">Bắt đầu trò chuyện mới?</h2>
+      <p class="modal-desc">Toàn bộ lịch sử trao đổi hiện tại sẽ được làm mới để bắt đầu chủ đề mới.</p>
+      <div class="modal-actions">
+        <button id="btn-modal-cancel" class="btn-modal-cancel">Hủy</button>
+        <button id="btn-modal-confirm" class="btn-modal-confirm">Đồng ý làm mới</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT THUẦN XỬ LÝ TOÀN BỘ CHỨC NĂNG -->
+  <script>
+    (function () {
+      "use strict";
+
+      // ======================================================================
+      // 1. CẤU HÌNH VÀ KHỞI TẠO BIẾN TRẠNG THÁI
+      // ======================================================================
+      const STORAGE_KEY = "agribot_chat_history_v1";
+      const MAX_MESSAGE_LENGTH = 4000;
+      const MAX_HISTORY_TO_SEND = 20;
+
+      // Mảng lưu lịch sử hội thoại: [{ role: "user" | "model", text: "..." }]
+      let chatHistory = [];
+      let isWaitingResponse = false;
+      let lastFailedMessage = null; // Lưu câu hỏi bị lỗi để phục vụ nút "Thử lại"
+
+      // Các gợi ý câu hỏi ban đầu
+      const SUGGESTIONS = [
+        "Lá lúa bị vàng là do đâu?",
+        "Cách tưới nước cho cây cà phê mùa khô",
+        "Phòng ngừa sâu đục thân trên ngô",
+        "Bón phân cho cây sầu riêng giai đoạn ra hoa"
+      ];
+
+      // Tham chiếu DOM
+      const chatContainer = document.getElementById("chat-messages");
+      const userInput = document.getElementById("user-input");
+      const btnSend = document.getElementById("btn-send");
+      const charCounter = document.getElementById("char-counter");
+      const btnNewChat = document.getElementById("btn-new-chat");
+      const confirmModal = document.getElementById("confirm-modal");
+      const btnModalCancel = document.getElementById("btn-modal-cancel");
+      const btnModalConfirm = document.getElementById("btn-modal-confirm");
+
+      // Cấu hình marked.js an toàn và chuẩn format
+      if (typeof marked !== "undefined" && marked.setOptions) {
+        marked.setOptions({
+          gfm: true,
+          breaks: true
+        });
+      }
+
+      // SỬA #7: Hook DOMPurify mở liên kết trong tab mới an toàn và giữ nguyên thuộc tính target
+      if (typeof DOMPurify !== "undefined" && DOMPurify.addHook) {
+        DOMPurify.addHook("afterSanitizeAttributes", function (node) {
+          if ("target" in node && node.nodeName === "A") {
+            node.setAttribute("target", "_blank");
+            node.setAttribute("rel", "noopener noreferrer");
+          }
+        });
+      }
+
+      // ======================================================================
+      // 2. QUẢN LÝ LOCALSTORAGE (CÓ BỌC TRY/CATCH)
+      // ======================================================================
+      function loadHistoryFromStorage() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) {
+              chatHistory = parsed.filter(item =>
+                item &&
+                (item.role === "user" || item.role === "model") &&
+                typeof item.text === "string"
+              );
+            }
+          }
+        } catch (err) {
+          console.warn("Không thể tải lịch sử từ localStorage:", err);
+          chatHistory = [];
+        }
+      }
+
+      function saveHistoryToStorage() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(chatHistory));
+        } catch (err) {
+          console.warn("Không thể lưu lịch sử vào localStorage:", err);
+        }
+      }
+
+      function clearStorage() {
+        try {
+          localStorage.removeItem(STORAGE_KEY);
+        } catch (err) {
+          console.warn("Không thể xóa localStorage:", err);
+        }
+      }
+
+      // ======================================================================
+      // 3. HIỂN THỊ GIAO DIỆN & TIN NHẮN
+      // ======================================================================
+
+      // Icon chiếc lá SVG dùng chung cho bot
+      // Hình hai lá của bộ nhận diện Trụ ADN (một màu, dùng fill của phần tử cha)
+      const LEAF_SVG = `
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 21C6 20 3 14 4 6C10 6 13 12 12 21Z"/>
+          <path d="M12 21C13 14 16 9 21 7C22 15 18 20 12 21Z"/>
+        </svg>
+      `;
+
+      // Tạo màn hình chào ban đầu với 4 gợi ý
+      function renderWelcomeScreen() {
+        const welcome = document.createElement("div");
+        welcome.className = "welcome-card";
+        welcome.id = "welcome-screen";
+
+        welcome.innerHTML = `
+          <div class="welcome-icon">${LEAF_SVG}</div>
+          <h2 class="welcome-title">Chào bác nông dân! Tôi là AgriBot</h2>
+          <p class="welcome-desc">
+            Trợ lý AI chuyên hỗ trợ kỹ thuật canh tác, chẩn đoán sâu bệnh hại và tư vấn dinh dưỡng cho cây trồng tại Việt Nam.
+          </p>
+          <p class="brand-tagline">Một góc ban công, một vòng tuần hoàn</p>
+          <div class="suggestions-header">Gợi ý câu hỏi phổ biến:</div>
+          <div class="suggestions-grid" id="suggestions-grid"></div>
+        `;
+
+        const grid = welcome.querySelector("#suggestions-grid");
+        SUGGESTIONS.forEach(text => {
+          const btn = document.createElement("button");
+          btn.className = "suggestion-chip";
+          btn.type = "button";
+          btn.setAttribute("aria-label", `Gợi ý câu hỏi: ${text}`);
+          btn.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span></span>
+          `;
+          btn.querySelector("span").textContent = text;
+          btn.addEventListener("click", () => handleSendPrompt(text));
+          grid.appendChild(btn);
+        });
+
+        chatContainer.appendChild(welcome);
+      }
+
+      // Xóa màn hình chào khi có tin nhắn đầu tiên
+      function removeWelcomeScreen() {
+        const screen = document.getElementById("welcome-screen");
+        if (screen) screen.remove();
+      }
+
+      // Cuộn xuống tin nhắn mới nhất
+      function scrollToBottom() {
+        requestAnimationFrame(() => {
+          chatContainer.scrollTop = chatContainer.scrollHeight;
+        });
+      }
+
+      // Hiển thị tin nhắn người dùng (sử dụng textContent chống XSS)
+      function appendUserMessage(text) {
+        removeWelcomeScreen();
+
+        const row = document.createElement("div");
+        row.className = "message-row user";
+
+        const bubble = document.createElement("div");
+        bubble.className = "message-bubble";
+        bubble.textContent = text; // Tuyệt đối an toàn bằng textContent
+
+        row.appendChild(bubble);
+        chatContainer.appendChild(row);
+        scrollToBottom();
+      }
+
+      // Hiển thị tin nhắn của AgriBot (Render Markdown + DOMPurify sanitize)
+      function appendBotMessage(markdownText) {
+        removeWelcomeScreen();
+
+        const row = document.createElement("div");
+        row.className = "message-row bot";
+
+        const avatar = document.createElement("div");
+        avatar.className = "avatar-bot";
+        avatar.setAttribute("aria-hidden", "true");
+        avatar.innerHTML = LEAF_SVG;
+
+        const bubble = document.createElement("div");
+        bubble.className = "message-bubble markdown-body";
+
+        // Chuyển đổi Markdown sang HTML an toàn
+        let rawHtml = "";
+        try {
+          if (typeof marked !== "undefined" && marked.parse) {
+            rawHtml = marked.parse(markdownText);
+          } else {
+            rawHtml = markdownText;
+          }
+        } catch (e) {
+          rawHtml = markdownText;
+        }
+
+        // SỬA #7: Khử độc qua DOMPurify kèm tùy chọn ADD_ATTR để giữ target="_blank"
+        const sanitizedHtml = (typeof DOMPurify !== "undefined" && DOMPurify.sanitize)
+          ? DOMPurify.sanitize(rawHtml, { ADD_ATTR: ["target"] })
+          : rawHtml.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+        bubble.innerHTML = sanitizedHtml;
+
+        row.appendChild(avatar);
+        row.appendChild(bubble);
+        chatContainer.appendChild(row);
+        scrollToBottom();
+      }
+
+      // Hiển thị hiệu ứng "AgriBot đang trả lời..." (3 chấm nhảy)
+      function showTypingIndicator() {
+        removeTypingIndicator();
+
+        const row = document.createElement("div");
+        row.className = "typing-indicator-row";
+        row.id = "typing-indicator";
+
+        row.innerHTML = `
+          <div class="avatar-bot" aria-hidden="true">${LEAF_SVG}</div>
+          <div class="typing-box">
+            <span>AgriBot đang trả lời</span>
+            <div class="dots-animation" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        `;
+
+        chatContainer.appendChild(row);
+        scrollToBottom();
+      }
+
+      // Xóa hiệu ứng 3 chấm
+      function removeTypingIndicator() {
+        const el = document.getElementById("typing-indicator");
+        if (el) el.remove();
+      }
+
+      // Hiển thị thông báo lỗi (có nút "Thử lại")
+      function appendErrorMessage(errorMessage, failedText) {
+        removeWelcomeScreen();
+        removeTypingIndicator();
+
+        lastFailedMessage = failedText;
+
+        const row = document.createElement("div");
+        row.className = "message-row system";
+        row.id = "last-error-row";
+
+        const bubble = document.createElement("div");
+        bubble.className = "message-bubble error-bubble";
+
+        const header = document.createElement("div");
+        header.className = "error-header";
+        header.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span class="error-text"></span>
+        `;
+        header.querySelector(".error-text").textContent = errorMessage || "Đã xảy ra sự cố khi kết nối.";
+        bubble.appendChild(header);
+
+        if (failedText) {
+          const btnRetry = document.createElement("button");
+          btnRetry.className = "btn-retry";
+          btnRetry.type = "button";
+          btnRetry.setAttribute("aria-label", "Thử gửi lại câu hỏi vừa rồi");
+          // SỬA #5: Icon xoay vòng chuẩn 24x24 cho nút Thử lại
+          btnRetry.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="23 4 23 10 17 10"></polyline>
+              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+            </svg>
+            <span>Thử lại</span>
+          `;
+          btnRetry.addEventListener("click", () => {
+            row.remove();
+            // SỬA #1: Truyền isRetry = true để không vẽ lại bong bóng người dùng
+            handleSendPrompt(failedText, true);
+          });
+          bubble.appendChild(btnRetry);
+        }
+
+        row.appendChild(bubble);
+        chatContainer.appendChild(row);
+        scrollToBottom();
+      }
+
+      // Vẽ toàn bộ hội thoại từ mảng chatHistory
+      function renderAllMessages() {
+        chatContainer.innerHTML = "";
+        if (chatHistory.length === 0) {
+          renderWelcomeScreen();
+        } else {
+          chatHistory.forEach(item => {
+            if (item.role === "user") {
+              appendUserMessage(item.text);
+            } else if (item.role === "model") {
+              appendBotMessage(item.text);
+            }
+          });
+        }
+        scrollToBottom();
+      }
+
+      // ======================================================================
+      // 4. QUẢN LÝ Ô NHẬP LIỆU (TEXTAREA, BỘ ĐẾM KÝ TỰ, TỰ CO GIÃN)
+      // ======================================================================
+      function adjustTextareaHeight() {
+        userInput.style.height = "auto";
+        userInput.style.height = Math.min(userInput.scrollHeight, 130) + "px";
+      }
+
+      function updateInputState() {
+        const text = userInput.value;
+        const length = text.length;
+        const trimmed = text.trim();
+
+        // Cập nhật bộ đếm ký tự
+        charCounter.textContent = `${length}/${MAX_MESSAGE_LENGTH}`;
+
+        if (length > MAX_MESSAGE_LENGTH) {
+          charCounter.className = "char-counter error";
+        } else if (length >= 3800) {
+          charCounter.className = "char-counter warning";
+        } else {
+          charCounter.className = "char-counter";
+        }
+
+        // Vô hiệu hóa nút gửi nếu: rỗng, vượt quá 4000 ký tự, hoặc đang chờ server
+        const isValid = trimmed.length > 0 && length <= MAX_MESSAGE_LENGTH;
+        btnSend.disabled = !isValid || isWaitingResponse;
+      }
+
+      // ======================================================================
+      // 5. GỬI TIN NHẮN ĐẾN BACKEND FLASK (/chat)
+      // ======================================================================
+      // SỬA #1: Thêm tham số isRetry (mặc định false) để không bị vẽ lặp bong bóng người dùng khi bấm Thử lại
+      async function handleSendPrompt(rawText, isRetry = false) {
+        const message = (rawText || "").trim();
+        if (!message || message.length > MAX_MESSAGE_LENGTH || isWaitingResponse) {
+          return;
+        }
+
+        // Xóa thông báo lỗi cũ nếu có
+        const oldError = document.getElementById("last-error-row");
+        if (oldError) oldError.remove();
+
+        // SỬA #1: Chỉ vẽ bong bóng người dùng khi không phải gửi lại (isRetry = false)
+        if (!isRetry) {
+          appendUserMessage(message);
+        }
+
+        // 2. Chuẩn bị history: server chỉ nhận 20 tin gần nhất & KHÔNG bao gồm message hiện tại
+        const historyToSend = chatHistory.slice(-MAX_HISTORY_TO_SEND).map(item => ({
+          role: item.role,
+          text: item.text
+        }));
+
+        // SỬA #3: Khóa trạng thái gửi và vô hiệu hóa nút Trò chuyện mới để tránh lẫn lịch sử
+        isWaitingResponse = true;
+        btnNewChat.disabled = true;
+        userInput.value = "";
+        adjustTextareaHeight();
+        updateInputState();
+        userInput.disabled = true;
+        showTypingIndicator();
+
+        try {
+          // Gửi POST tới backend Flask qua đường dẫn tương đối
+          const response = await fetch("/chat", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              message: message,
+              history: historyToSend
+            })
+          });
+
+          const data = await response.json().catch(() => ({}));
+
+          removeTypingIndicator();
+
+          if (response.ok && data.reply) {
+            // Thành công: đưa vào history cả user và model
+            chatHistory.push({ role: "user", text: message });
+            chatHistory.push({ role: "model", text: data.reply });
+            saveHistoryToStorage();
+
+            appendBotMessage(data.reply);
+            lastFailedMessage = null;
+          } else {
+            // Server trả mã lỗi 400, 502...
+            const errMsg = data.error || `Lỗi máy chủ (${response.status}). Vui lòng thử lại sau.`;
+            appendErrorMessage(errMsg, message);
+          }
+
+        } catch (networkError) {
+          // Lỗi mạng hoặc không thể kết nối server
+          removeTypingIndicator();
+          console.error("Lỗi fetch:", networkError);
+          appendErrorMessage("Không thể kết nối với máy chủ. Vui lòng kiểm tra mạng và thử lại.", message);
+        } finally {
+          // SỬA #3: Mở lại trạng thái nhập liệu và bật lại nút Trò chuyện mới
+          isWaitingResponse = false;
+          userInput.disabled = false;
+          btnNewChat.disabled = false;
+          updateInputState();
+          userInput.focus();
+        }
+      }
+
+      // ======================================================================
+      // 6. XỬ LÝ SỰ KIỆN TƯƠNG TÁC
+      // ======================================================================
+
+      // Sự kiện gõ phím trong ô nhập liệu
+      userInput.addEventListener("input", () => {
+        adjustTextareaHeight();
+        updateInputState();
+      });
+
+      // Nhấn Enter để gửi, Shift+Enter xuống dòng
+      userInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          if (!btnSend.disabled) {
+            handleSendPrompt(userInput.value);
+          }
+        }
+      });
+
+      // Bấm nút gửi
+      btnSend.addEventListener("click", () => {
+        handleSendPrompt(userInput.value);
+      });
+
+      // SỬA #4: Bỏ điều kiện cứng "if (chatHistory.length === 0) return;".
+      // Nếu chatHistory rỗng nhưng đang có tin lỗi trên màn hình thì làm mới thẳng không cần modal.
+      btnNewChat.addEventListener("click", () => {
+        // SỬA #3: Chặn thao tác nếu đang chờ trả lời
+        if (isWaitingResponse) return;
+
+        if (chatHistory.length === 0) {
+          const hasWelcomeScreen = document.getElementById("welcome-screen");
+          if (!hasWelcomeScreen) {
+            // Có tin nhắn / lỗi đầu tiên trên màn hình -> xóa sạch và quay về màn hình chào
+            lastFailedMessage = null;
+            clearStorage();
+            renderAllMessages();
+            userInput.value = "";
+            adjustTextareaHeight();
+            updateInputState();
+            userInput.focus();
+          }
+          return;
+        }
+
+        // Đã có lịch sử hội thoại thì mở modal xác nhận
+        confirmModal.classList.add("active");
+        btnModalConfirm.focus();
+      });
+
+      // Hủy modal
+      btnModalCancel.addEventListener("click", () => {
+        confirmModal.classList.remove("active");
+      });
+
+      // Đóng modal khi bấm ra vùng backdrop
+      confirmModal.addEventListener("click", (e) => {
+        if (e.target === confirmModal) {
+          confirmModal.classList.remove("active");
+        }
+      });
+
+      // Xác nhận tạo cuộc trò chuyện mới
+      btnModalConfirm.addEventListener("click", () => {
+        // SỬA #3: Không làm gì nếu đang trong quá trình chờ bot phản hồi
+        if (isWaitingResponse) return;
+
+        confirmModal.classList.remove("active");
+        chatHistory = [];
+        lastFailedMessage = null;
+        clearStorage();
+        renderAllMessages();
+        userInput.value = "";
+        adjustTextareaHeight();
+        updateInputState();
+        userInput.focus();
+      });
+
+      // Đóng modal bằng phím Escape
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && confirmModal.classList.contains("active")) {
+          confirmModal.classList.remove("active");
+        }
+      });
+
+      // ======================================================================
+      // 7. KHỞI CHẠY LẦN ĐẦU KHI TẢI TRANG
+      // ======================================================================
+      loadHistoryFromStorage();
+      renderAllMessages();
+      updateInputState();
+      adjustTextareaHeight();
+
+    })();
+  </script>
+  <script src="/static/js/nav.js"></script>
+</body>
+</html>
