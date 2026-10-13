@@ -86,6 +86,16 @@ def test_history_events_and_csv_endpoints(client):
     assert "attachment" in r.headers["Content-Disposition"]
 
 
+def test_run_config_local_vs_host():
+    local = app_module.get_run_config({})
+    assert local == {"host": "127.0.0.1", "port": 5000, "debug": True}
+    host = app_module.get_run_config({"PORT": "10000"})
+    assert host == {"host": "0.0.0.0", "port": 10000, "debug": False}   # host công khai: không debug
+    assert app_module.get_run_config({"PORT": "10000", "FLASK_DEBUG": "1"})["debug"] is True
+    assert app_module.get_run_config({"FLASK_DEBUG": "0"})["debug"] is False
+    assert app_module.get_run_config({"PORT": "abc"})["port"] == 5000       # PORT hỏng thì dùng mặc định
+
+
 def test_chat_without_key_returns_503_not_crash(client, monkeypatch):
     monkeypatch.setattr(app_module, "client", None)
     r = client.post("/chat", json={"message": "xin chào"})

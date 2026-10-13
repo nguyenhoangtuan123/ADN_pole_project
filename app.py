@@ -286,10 +286,30 @@ def chat():
         }), 502
 
 
+def get_run_config(environ):
+    """Cấu hình chạy `python app.py`.
+
+    - Trên máy bạn (không có biến PORT): chỉ nghe 127.0.0.1:5000 và bật debug để tự nạp lại code.
+    - Trên host như Render/Railway (host đặt biến PORT): nghe 0.0.0.0:$PORT và TẮT debug,
+      vì trình gỡ lỗi Werkzeug trên máy chủ công khai là lỗ hổng bảo mật.
+    Đặt FLASK_DEBUG=1 hoặc 0 để ép bật/tắt debug.
+    """
+    on_host = "PORT" in environ
+    try:
+        port = int(environ.get("PORT", "5000"))
+    except ValueError:
+        port = 5000
+    debug = environ.get("FLASK_DEBUG", "0" if on_host else "1") == "1"
+    return {"host": "0.0.0.0" if on_host else "127.0.0.1", "port": port, "debug": debug}
+
+
 if __name__ == "__main__":
-    # Chế độ debug khởi động 2 tiến trình; chỉ chạy luồng mô phỏng ở tiến trình con.
-    if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+    cfg = get_run_config(os.environ)
+    # Debug bật thì Flask khởi động 2 tiến trình; chỉ chạy luồng mô phỏng ở tiến trình con.
+    # Debug tắt thì chỉ có một tiến trình nên chạy luồng ngay.
+    if not cfg["debug"] or os.environ.get("WERKZEUG_RUN_MAIN") == "true":
         start_simulation_thread()
-    app.run(debug=True)
+    app.run(host=cfg["host"], port=cfg["port"], debug=cfg["debug"])
 else:
+    # Được nạp bởi máy chủ WSGI (gunicorn): chạy luồng mô phỏng, nhớ dùng đúng 1 worker.
     start_simulation_thread()
