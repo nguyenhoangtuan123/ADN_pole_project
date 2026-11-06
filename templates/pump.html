@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Máy bơm thật · Trụ ADN</title>
+  <meta name="description" content="Điều khiển máy bơm thật qua ESP32 và MQTT.">
+  <link rel="stylesheet" href="/static/css/nav.css">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/brand.css">
+  <link rel="stylesheet" href="/static/css/pump.css">
+  <link rel="icon" type="image/svg+xml" href="/static/img/favicon.svg">
+</head>
+<body>
+  {% set active_page = 'pump' %}
+  {% include "_nav.html" %}
+  <div id="main-content" tabindex="-1" style="outline:none"></div>
+  <header class="sim-banner pump-banner">
+    <div class="sim-banner__text">
+      <h1>Máy bơm thật <span class="sub">ESP32 · MQTT</span></h1>
+      <p>Trạng thái bên dưới do thiết bị gửi về. Lệnh điều khiển không đồng nghĩa với xác nhận đã chạy.</p>
+    </div>
+    <span class="badge pump-real-badge">DỮ LIỆU THẬT</span>
+  </header>
+  <main class="pump-layout">
+    {% if not mqtt_configured %}
+    <p class="pump-notice" role="status">Chưa cấu hình MQTT. Hãy đặt MQTT_WS_URL, MQTT_WEB_USER và MQTT_WEB_PASS.</p>
+    {% endif %}
+    <section class="card pump-card" aria-labelledby="pump-title">
+      <div class="pump-card__heading">
+        <div><h2 id="pump-title">Điều khiển bơm</h2><p class="muted">Kết nối trình duyệt trực tiếp đến broker EMQX qua WebSocket TLS.</p></div>
+        <span id="broker-state" class="pump-connection" aria-live="polite">Chưa kết nối broker</span>
+      </div>
+      <div class="pump-status-panel" aria-live="polite" aria-atomic="true">
+        <div><span class="pump-label">Thiết bị</span><strong id="device-state">Chưa rõ</strong></div>
+        <div><span class="pump-label">Trạng thái bơm</span><strong id="pump-state" class="pump-state">CHƯA RÕ</strong></div>
+        <div><span class="pump-label">Thời gian chạy</span><strong id="run-time">00:00</strong></div>
+      </div>
+      <div class="pump-actions">
+        <button id="pump-on" class="btn btn-primary" type="button" disabled>Bật bơm</button>
+        <button id="pump-off" class="btn btn-danger" type="button" disabled>Tắt bơm</button>
+      </div>
+      <p id="pump-feedback" class="pump-feedback" role="status" aria-live="polite">Đang chờ dữ liệu thiết bị.</p>
+      <p class="pump-safety-note">Bơm tự tắt sau 5 phút chạy liên tục. Nếu mất kết nối WiFi hoặc MQTT quá 30 giây, ESP32 cũng tự tắt bơm.</p>
+    </section>
+    <section class="card pump-card" aria-labelledby="log-title">
+      <h2 id="log-title">Nhật ký gần đây</h2>
+      <ol id="pump-log" class="events pump-log" aria-live="polite"><li>Chưa có sự kiện.</li></ol>
+    </section>
+  </main>
+  <footer class="footnote">Máy bơm thật · Điều khiển qua MQTT</footer>
+  <script>
+    window.PUMP_MQTT_CONFIG = {
+      url: {{ mqtt_ws_url|tojson }},
+      username: {{ mqtt_web_user|tojson }},
+      password: {{ mqtt_web_pass|tojson }},
+      configured: {{ mqtt_configured|tojson }}
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mqtt@5.10.4/dist/mqtt.min.js" defer></script>
+  <script src="/static/js/pump.js" defer></script>
+</body>
+</html>

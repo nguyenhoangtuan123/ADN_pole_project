@@ -1,5 +1,5 @@
 {#- templates/_nav.html
-    Partial: Thanh điều hướng dùng chung cho cả hai trang.
+    Partial: Thanh điều hướng dùng chung cho các trang.
     Cách dùng – đặt trước include:
         {% set active_page = 'dashboard' %}   (hoặc 'chat')
         {% include "_nav.html" %}
@@ -35,6 +35,18 @@
           <rect x="14" y="14" width="7" height="7" rx="1"/>
         </svg>
         <span class="site-nav__link-label">Giám sát &amp; Điều khiển</span>
+      </a>
+    </li>
+    <li>
+      <a href="/pump"
+         class="site-nav__link{% if active_page == 'pump' %} site-nav__link--active{% endif %}"
+         {% if active_page == 'pump' %}aria-current="page"{% endif %}
+         aria-label="Máy bơm thật – điều khiển qua MQTT">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M4 14h3l2-5h6l2 5h3"/><path d="M7 14v4h10v-4M12 9V5m-3 0h6"/><circle cx="12" cy="18" r="1"/>
+        </svg>
+        <span class="site-nav__link-label">Máy bơm thật</span>
       </a>
     </li>
     <li>

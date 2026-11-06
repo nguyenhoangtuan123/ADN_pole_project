@@ -19,6 +19,31 @@ def test_dashboard_page_served(client):
     assert client.get("/dashboard").status_code == 200
 
 
+def test_real_pump_page_served_and_nav_active(client, monkeypatch):
+    monkeypatch.delenv("MQTT_WS_URL", raising=False)
+    monkeypatch.delenv("MQTT_WEB_USER", raising=False)
+    monkeypatch.delenv("MQTT_WEB_PASS", raising=False)
+    response = client.get("/pump")
+    assert response.status_code == 200
+    html = response.get_data(as_text=True)
+    assert "Chưa cấu hình MQTT" in html
+    assert "Máy bơm thật" in html
+    assert 'href="/pump"' in html
+    assert 'aria-current="page"' in html
+
+
+def test_real_pump_page_includes_mqtt_environment_config(client, monkeypatch):
+    monkeypatch.setenv("MQTT_WS_URL", "wss://broker.example.test/mqtt")
+    monkeypatch.setenv("MQTT_WEB_USER", "test-web-user")
+    monkeypatch.setenv("MQTT_WEB_PASS", "test-web-password")
+    response = client.get("/pump")
+    html = response.get_data(as_text=True)
+    assert response.status_code == 200
+    assert "wss://broker.example.test/mqtt" in html
+    assert "test-web-user" in html
+    assert "test-web-password" in html
+
+
 def test_state_has_expected_shape(client):
     s = client.get("/api/state").get_json()
     assert s["data_source"] == "SIMULATION"

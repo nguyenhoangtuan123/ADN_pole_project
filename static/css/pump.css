@@ -1,0 +1,25 @@
+.pump-banner { background: #e8f5e9; border-color: #a5d6a7; }
+.pump-real-badge { background: #1b5e20; color: #fff; }
+.pump-layout { max-width: 960px; margin: 0 auto; padding: 16px; display: grid; gap: 16px; }
+.pump-card { min-width: 0; }
+.pump-card__heading { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.pump-card__heading p { margin: -6px 0 12px; }
+.pump-connection { border: 1px solid var(--border); border-radius: 999px; padding: 5px 10px; font-size: .82rem; font-weight: 700; }
+.pump-status-panel { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 10px 0; }
+.pump-status-panel > div { display: flex; flex-direction: column; gap: 4px; padding: 14px; border-radius: 12px; background: var(--green-soft); min-width: 0; }
+.pump-label { color: var(--muted); font-size: .78rem; }
+.pump-status-panel strong { color: var(--green-dark); font-size: 1.15rem; overflow-wrap: anywhere; }
+.pump-status-panel .pump-state { font-size: clamp(1.5rem, 6vw, 2.5rem); }
+.pump-state.is-on { color: var(--blue); }
+.pump-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0 8px; }
+.pump-actions .btn { min-width: 130px; }
+.pump-feedback { min-height: 1.5em; margin: 8px 0; font-weight: 600; }
+.pump-safety-note, .pump-notice { padding: 10px 12px; border-radius: 10px; background: #fff3e0; color: #7a3e00; border: 1px solid #ffcc80; }
+.pump-notice { max-width: 960px; margin: 12px auto 0; width: calc(100% - 32px); font-weight: 700; }
+.pump-log { max-height: 300px; }
+@media (max-width: 560px) {
+  .pump-layout { padding: 10px; }
+  .pump-status-panel { grid-template-columns: 1fr; }
+  .pump-status-panel > div { padding: 10px 12px; }
+  .pump-actions .btn { flex: 1; }
+}

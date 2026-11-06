@@ -70,6 +70,21 @@ def dashboard():
     return render_template("dashboard.html")
 
 
+@app.get("/pump")
+def real_pump():
+    mqtt_ws_url = os.getenv("MQTT_WS_URL", "")
+    mqtt_web_user = os.getenv("MQTT_WEB_USER", "")
+    mqtt_web_pass = os.getenv("MQTT_WEB_PASS", "")
+    return render_template(
+        "pump.html",
+        active_page="pump",
+        mqtt_ws_url=mqtt_ws_url,
+        mqtt_web_user=mqtt_web_user,
+        mqtt_web_pass=mqtt_web_pass,
+        mqtt_configured=all((mqtt_ws_url, mqtt_web_user, mqtt_web_pass)),
+    )
+
+
 @app.get("/api/state")
 def api_state():
     return jsonify(sim.snapshot())
