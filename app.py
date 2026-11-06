@@ -13,7 +13,10 @@ from simulation import Simulation
 load_dotenv()
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.getenv("ADN_DB_PATH", os.path.join(BASE_DIR, "database", "tru_adn.db"))
+# Vercel chỉ cho ghi vào /tmp. Dữ liệu ở đây là tạm thời và có thể mất giữa
+# các lần gọi hàm; đặt ADN_DB_PATH để chọn nơi lưu khác trên các máy chủ phù hợp.
+DEFAULT_DB_PATH = "/tmp/tru_adn.db" if os.getenv("VERCEL") else os.path.join(BASE_DIR, "database", "tru_adn.db")
+DB_PATH = os.getenv("ADN_DB_PATH", DEFAULT_DB_PATH)
 
 app = Flask(__name__)
 
