@@ -6,3 +6,4 @@ database/*.db
 database/*.db-wal
 database/*.db-shm
 .pytest_cache/
+secrets.h

@@ -12,6 +12,7 @@
 #include <PubSubClient.h>
 #include <string.h>
 #include <stdio.h>
+#include <esp_task_wdt.h>
 #include "secrets.h"
 
 const int PUMP_PIN = 23;
@@ -19,7 +20,10 @@ const int RELAY_ACTIVE_LEVEL = HIGH;
 const int RELAY_INACTIVE_LEVEL = (RELAY_ACTIVE_LEVEL == HIGH) ? LOW : HIGH;
 const unsigned long PUMP_MAX_RUN_MS = 300000UL;
 const unsigned long FAILSAFE_DISCONNECT_MS = 30000UL;
-const unsigned long STATUS_INTERVAL_MS = 10000UL;
+const unsigned long STATUS_INTERVAL_MS = 10000UL;       // khi bom tat
+const unsigned long STATUS_INTERVAL_ON_MS = 5000UL;     // khi bom dang chay (de web hien thoi gian chinh xac)
+const uint32_t WDT_TIMEOUT_S = 20;                      // treo qua 20 giay thi tu khoi dong lai
+const uint32_t MQTT_SOCKET_TIMEOUT_S = 5;
 const unsigned long WIFI_PORTAL_AFTER_MS = 120000UL;  // mat WiFi lau thi mo lai trang cau hinh
 const unsigned long PORTAL_TIMEOUT_S = 180;
 const unsigned long RESET_HOLD_MS = 3000UL;
@@ -36,18 +40,39 @@ PubSubClient mqtt(secureClient);
 bool pumpOn = false;
 unsigned long pumpStartedAt = 0;
 unsigned long lastGoodConnectionAt = 0;
-unsigned long connectedSinceAt = 0;
 unsigned long lastStatusAt = 0;
 unsigned long wifiLostAt = 0;
 unsigned long resetPressedAt = 0;
 WiFiManager wifiManager;
 unsigned long lastMqttAttemptAt = 0;
 
+// Dinh dang status: "OFF" hoac "ON:<giay_da_chay>:<giay_toi_da>" (web dung de hien thoi gian that).
 void publishStatus() {
   if (mqtt.connected()) {
-    mqtt.publish(TOPIC_STATUS, pumpOn ? "ON" : "OFF", true);
+    char payload[32];
+    if (pumpOn) {
+      snprintf(payload, sizeof(payload), "ON:%lu:%lu",
+               (millis() - pumpStartedAt) / 1000UL, PUMP_MAX_RUN_MS / 1000UL);
+    } else {
+      snprintf(payload, sizeof(payload), "OFF");
+    }
+    mqtt.publish(TOPIC_STATUS, payload, true);
     lastStatusAt = millis();
   }
+}
+
+// Watchdog: loop() ngung chay qua WDT_TIMEOUT_S thi ESP32 tu khoi dong lai (relay ve OFF).
+void watchdogStart() {
+#if defined(ESP_ARDUINO_VERSION_MAJOR) && ESP_ARDUINO_VERSION_MAJOR >= 3
+  esp_task_wdt_config_t cfg = {};
+  cfg.timeout_ms = WDT_TIMEOUT_S * 1000;
+  cfg.idle_core_mask = 0;
+  cfg.trigger_panic = true;
+  if (esp_task_wdt_reconfigure(&cfg) != ESP_OK) esp_task_wdt_init(&cfg);
+#else
+  esp_task_wdt_init(WDT_TIMEOUT_S, true);
+#endif
+  esp_task_wdt_add(NULL);
 }
 
 void setPump(bool turnOn) {
@@ -79,6 +104,7 @@ void messageCallback(char *topic, byte *payload, unsigned int length) {
 void openWifiPortal(bool forgetSaved) {
   setPump(false);
   if (mqtt.connected()) mqtt.disconnect();
+  esp_task_wdt_delete(NULL);  // trang cau hinh chan toi 3 phut, tam tat watchdog (bom da tat)
   if (forgetSaved) wifiManager.resetSettings();
   wifiManager.setConfigPortalTimeout(PORTAL_TIMEOUT_S);
   wifiManager.setConnectTimeout(20);
@@ -87,6 +113,7 @@ void openWifiPortal(bool forgetSaved) {
   else wifiManager.autoConnect(PORTAL_NAME);
   wifiLostAt = 0;
   lastGoodConnectionAt = millis();
+  esp_task_wdt_add(NULL);
 }
 
 void checkResetButton(unsigned long now) {
@@ -109,13 +136,14 @@ void connectMqtt() {
            mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
   // setInsecure phu hop cho ban thi; khi trien khai that hay thay bang setCACert.
   secureClient.setInsecure();
+  secureClient.setTimeout(MQTT_SOCKET_TIMEOUT_S);
+  mqtt.setSocketTimeout(MQTT_SOCKET_TIMEOUT_S);
   mqtt.setServer(MQTT_HOST, MQTT_PORT);
   mqtt.setCallback(messageCallback);
   mqtt.setKeepAlive(15);
   // Ket noi MQTT co gioi han timeout ngan; vong lap khong dung delay cho retry.
   if (mqtt.connect(clientId, MQTT_USER, MQTT_PASS, TOPIC_ONLINE, 1, true, "offline")) {
-    connectedSinceAt = millis();
-    lastGoodConnectionAt = connectedSinceAt;
+    lastGoodConnectionAt = millis();
     mqtt.publish(TOPIC_ONLINE, "online", true);
     mqtt.subscribe(TOPIC_CMD, 1);
     // Bao cao lai trang thai vat ly, khong phat lai lenh cu.
@@ -136,9 +164,11 @@ void setup() {
   Serial.println("Khoi dong: relay tat, trang thai OFF");
   WiFi.mode(WIFI_STA);
   openWifiPortal(false);
+  watchdogStart();
 }
 
 void loop() {
+  esp_task_wdt_reset();
   const unsigned long now = millis();
   checkResetButton(now);
   if (WiFi.status() == WL_CONNECTED) {
@@ -147,7 +177,7 @@ void loop() {
     if (mqtt.connected()) {
       mqtt.loop();
       lastGoodConnectionAt = millis();
-      if (millis() - lastStatusAt >= STATUS_INTERVAL_MS) publishStatus();
+      if (millis() - lastStatusAt >= (pumpOn ? STATUS_INTERVAL_ON_MS : STATUS_INTERVAL_MS)) publishStatus();
     } else if (pumpOn && now - lastGoodConnectionAt >= FAILSAFE_DISCONNECT_MS) {
       setPump(false);
       Serial.println("Failsafe: mat MQTT, da tat bom");

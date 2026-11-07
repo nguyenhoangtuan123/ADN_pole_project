@@ -7,6 +7,7 @@
   const deviceState = byId("device-state");
   const pumpState = byId("pump-state");
   const runTime = byId("run-time");
+  const runLeft = byId("run-left");
   const feedback = byId("pump-feedback");
   const log = byId("pump-log");
   const onButton = byId("pump-on");
@@ -15,6 +16,7 @@
   let online = false;
   let reportedState = null;
   let runningSince = null;
+  let maxRunMs = null;
   let pending = null;
   let logCount = 0;
 
@@ -41,15 +43,46 @@
     return String(Math.floor(total / 60)).padStart(2, "0") + ":" + String(total % 60).padStart(2, "0");
   }
 
-  function showStatus(value) {
-    if (value !== "ON" && value !== "OFF") return;
+  // Payload status: "OFF" hoặc "ON:<giây_đã_chạy>:<giây_tối_đa>" (ESP32 báo thời gian thật).
+  function parseStatus(raw) {
+    const parts = raw.split(":");
+    if (parts[0] !== "ON" && parts[0] !== "OFF") return null;
+    const elapsed = parts[1] ? Number(parts[1]) : NaN;
+    const max = parts[2] ? Number(parts[2]) : NaN;
+    return {
+      value: parts[0],
+      elapsedMs: Number.isFinite(elapsed) && elapsed >= 0 ? elapsed * 1000 : null,
+      maxMs: Number.isFinite(max) && max > 0 ? max * 1000 : null
+    };
+  }
+
+  function updateTimers() {
+    if (runningSince === null) {
+      runTime.textContent = "00:00";
+      runLeft.textContent = "--:--";
+      return;
+    }
+    const elapsed = Date.now() - runningSince;
+    runTime.textContent = formatDuration(elapsed);
+    runLeft.textContent = maxRunMs === null ? "--:--" : formatDuration(maxRunMs - elapsed);
+  }
+
+  function showStatus(raw) {
+    const status = parseStatus(raw);
+    if (!status) return;
+    const value = status.value;
     const changed = reportedState !== value;
     reportedState = value;
     pumpState.textContent = value === "ON" ? "BẬT" : "TẮT";
     pumpState.classList.toggle("is-on", value === "ON");
-    if (value === "ON" && runningSince === null) runningSince = Date.now();
-    if (value === "OFF") runningSince = null;
-    runTime.textContent = runningSince === null ? "00:00" : formatDuration(Date.now() - runningSince);
+    if (value === "ON") {
+      if (status.elapsedMs !== null) runningSince = Date.now() - status.elapsedMs;
+      else if (runningSince === null) runningSince = Date.now();
+      if (status.maxMs !== null) maxRunMs = status.maxMs;
+    } else {
+      runningSince = null;
+    }
+    updateTimers();
     if (changed) addLog("ESP32 báo bơm " + (value === "ON" ? "BẬT" : "TẮT"));
     if (pending && pending.command === value) {
       clearTimeout(pending.timer);
@@ -83,9 +116,7 @@
 
   onButton.addEventListener("click", () => sendCommand("ON"));
   offButton.addEventListener("click", () => sendCommand("OFF"));
-  setInterval(() => {
-    if (runningSince !== null) runTime.textContent = formatDuration(Date.now() - runningSince);
-  }, 1000);
+  setInterval(updateTimers, 1000);
 
   if (!config.configured) {
     brokerState.textContent = "Chưa cấu hình MQTT";
@@ -144,7 +175,7 @@
         pumpState.textContent = "CHƯA RÕ";
         pumpState.classList.remove("is-on");
         runningSince = null;
-        runTime.textContent = "00:00";
+        updateTimers();
       }
       updateButtons();
     } else if (topic === "adn/pump/status") {

@@ -9,7 +9,7 @@ Trình duyệt tại `/pump` kết nối WebSocket TLS trực tiếp tới EMQX 
 | Topic | Hướng | Payload | QoS/retain |
 |---|---|---|---|
 | `adn/pump/cmd` | Web → ESP32 | `ON` / `OFF` | QoS 1, không retain |
-| `adn/pump/status` | ESP32 → Web | `ON` / `OFF` | QoS 1, retain; gửi khi đổi trạng thái và mỗi 10 giây |
+| `adn/pump/status` | ESP32 → Web | `OFF` hoặc `ON:<giây đã chạy>:<giây tối đa>` (vd `ON:75:300`) | retain; gửi khi đổi trạng thái, mỗi 5 giây khi bơm chạy, mỗi 10 giây khi tắt |
 | `adn/pump/online` | ESP32 → Web | `online` / `offline` | retain; Last Will là `offline` |
 
 ## Nạp firmware
