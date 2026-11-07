@@ -2,7 +2,7 @@
    brand.css – Bộ nhận diện THÁP ADN: "Hệ sinh thái tuần hoàn trong tầm tay"
    Nạp SAU các CSS khác của từng trang để ghi đè biến màu.
    Bảng màu: xanh rừng #0E5A45 · xanh biển #0B7B8C · xanh lá tươi #5FAF47 · xanh lá nhạt #DCEFD8 · kem #F7F9F3
-   Font: Be Vietnam Pro (tiêu đề) + Inter (nội dung).
+   Font: Be Vietnam Pro (toàn bộ giao diện).
    Màu nước (xanh dương) và màu trạng thái (đỏ/cam) giữ nguyên vì mang ý nghĩa dữ liệu.
    ========================================================================== */
 :root {
@@ -43,7 +43,8 @@
   --shadow-lg: 0 6px 18px rgba(14, 90, 69, 0.18);
 }
 
-h1, h2, h3, .site-nav__logo-text { font-family: "Be Vietnam Pro", Inter, system-ui, sans-serif; }
+body, button, input, select, textarea { font-family: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+h1, h2, h3, .site-nav__logo-text { font-family: inherit; }
 /* Nền trang: dashboard luôn nền kem (chưa có chế độ tối); trang chatbot theo biến nền sáng/tối của nó */
 body { background: var(--brand-cream); }
 body.page-chat { background: var(--color-bg-app); }
