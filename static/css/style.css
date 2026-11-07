@@ -1,6 +1,6 @@
 :root {
-  --green: #2e7d32;
-  --green-dark: #1b5e20;
+  --green: #0E5A45;
+  --green-dark: #0A4636;
   --green-soft: #e8f5e9;
   --blue: #1976d2;
   --blue-soft: #bbdefb;
@@ -23,7 +23,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   font-size: 16px;
   line-height: 1.5;
 }
@@ -35,7 +35,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 14px 20px;
-  background: linear-gradient(90deg, var(--green-dark), var(--green));
+  background: linear-gradient(90deg, var(--green), var(--green));
   color: #fff;
 }
 .topbar h1 { margin: 0; font-size: 1.3rem; }
@@ -76,7 +76,7 @@ body {
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 14px 16px;
-  box-shadow: 0 2px 8px rgba(46, 125, 50, .06);
+  box-shadow: 0 2px 8px rgba(14, 90, 69, .06);
 }
 .card h2 { margin: 0 0 10px; font-size: 1.05rem; color: var(--green-dark); }
 .muted { color: var(--muted); font-weight: 400; font-size: .85rem; }
@@ -171,7 +171,7 @@ select { width: auto; }
 
 .footnote { text-align: center; color: var(--muted); font-size: .78rem; padding: 4px 16px 24px; }
 
-/* ---- SVG Trụ ADN ---- */
+/* ---- SVG Tháp ADN ---- */
 .diagram-card svg { width: 100%; height: auto; max-height: 90vh; display: block; }
 .helix { fill: none; stroke: var(--copper); stroke-width: 4; stroke-linecap: round; opacity: .85; }
 .axis { fill: #78909c; }
@@ -213,7 +213,7 @@ select { width: auto; }
 .step .leca { fill: var(--blue); opacity: .85; }
 .step:hover .box, .step:focus-visible .box, .step.selected .box { stroke: var(--blue); stroke-width: 3.5; }
 .step .lbl { font-size: 12px; font-weight: 800; fill: #1f291e; pointer-events: none; }
-.step .plant { fill: #43a047; stroke: #1b5e20; stroke-width: 1; }
+.step .plant { fill: #5FAF47; stroke: #0A4636; stroke-width: 1; }
 .strand-title { font-size: 14px; font-weight: 800; fill: var(--green-dark); }
 .tee { fill: var(--blue); }
 .hose { stroke-width: 4; }

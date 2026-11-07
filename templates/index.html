@@ -4,14 +4,16 @@
   <meta charset="UTF-8">
   <!-- SỬA #2: Bỏ maximum-scale và user-scalable=no để người dùng có thể phóng to/thu nhỏ linh hoạt -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>AgriBot · Trụ ADN</title>
-  <meta name="description" content="AgriBot – Trợ lý AI tư vấn kỹ thuật canh tác, chẩn đoán sâu bệnh và dinh dưỡng cây trồng cho hệ thống Trụ ADN và nhà nông Việt Nam.">
+  <title>AgriBot · Tháp ADN</title>
+  <meta name="description" content="AgriBot – Trợ lý AI tư vấn kỹ thuật canh tác, chẩn đoán sâu bệnh và dinh dưỡng cây trồng cho hệ thống Tháp ADN và nhà nông Việt Nam.">
 
-  <!-- Thư viện Markdown & Sanitize (phiên bản cố định từ cdnjs) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/15.0.7/marked.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.2.4/purify.min.js"></script>
+  <!-- Thư viện Markdown & Sanitize (phiên bản cố định, tự host trong static/js/vendor) -->
+  <script src="/static/js/vendor/marked.min.js"></script>
+  <script src="/static/js/vendor/purify.min.js"></script>
   <!-- Thanh điều hướng dùng chung -->
   <link rel="stylesheet" href="/static/css/nav.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
     /* ==========================================================================
@@ -19,11 +21,11 @@
        ========================================================================== */
     :root {
       /* Tông màu xanh nông nghiệp & nền kem nhạt */
-      --color-primary: #2e7d32;
-      --color-primary-hover: #1b5e20;
-      --color-primary-light: #e8f5e9;
-      --color-primary-subtle: #f1f8e9;
-      --color-accent: #66bb6a;
+      --color-primary: #0E5A45;
+      --color-primary-hover: #0A4636;
+      --color-primary-light: #DCEFD8;
+      --color-primary-subtle: #EAF4E6;
+      --color-accent: #5FAF47;
 
       --color-bg-app: #f6f8f4;
       --color-bg-card: #ffffff;
@@ -40,7 +42,7 @@
 
       --color-bubble-bot: #ffffff;
       --color-bubble-bot-border: #e3ebd8;
-      --color-bubble-user: #2e7d32;
+      --color-bubble-user: #0E5A45;
       --color-bubble-user-text: #ffffff;
 
       --color-danger-bg: #fde8e8;
@@ -52,9 +54,9 @@
       --color-retry-text: #9b1c1c;
       --color-retry-hover: #fef2f2;
 
-      --color-focus: rgba(46, 125, 50, 0.45);
+      --color-focus: rgba(14, 90, 69, 0.45);
       --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
-      --shadow-md: 0 4px 14px rgba(46, 125, 50, 0.08);
+      --shadow-md: 0 4px 14px rgba(14, 90, 69, 0.08);
       --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.07);
 
       --radius-sm: 8px;
@@ -62,17 +64,17 @@
       --radius-lg: 20px;
       --radius-full: 9999px;
 
-      --font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
     /* Giao diện Dark Mode theo hệ thống */
     @media (prefers-color-scheme: dark) {
       :root {
-        --color-primary: #388e3c;
-        --color-primary-hover: #4caf50;
+        --color-primary: #0E5A45;
+        --color-primary-hover: #1B7A5E;
         --color-primary-light: #182b1b;
         --color-primary-subtle: #1a251b;
-        --color-accent: #81c784;
+        --color-accent: #5FAF47;
 
         --color-bg-app: #111612;
         --color-bg-card: #182019;
@@ -89,7 +91,7 @@
 
         --color-bubble-bot: #1c271e;
         --color-bubble-bot-border: #2c3e2e;
-        --color-bubble-user: #2e7d32;
+        --color-bubble-user: #0E5A45;
         --color-bubble-user-text: #ffffff;
 
         --color-danger-bg: #321919;
@@ -178,11 +180,11 @@
       width: 42px;
       height: 42px;
       border-radius: var(--radius-md);
-      background: linear-gradient(135deg, #2e7d32, #43a047);
+      background: linear-gradient(135deg, #0E5A45, #0B7B8C);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 3px 10px rgba(46, 125, 50, 0.25);
+      box-shadow: 0 3px 10px rgba(14, 90, 69, 0.25);
       flex-shrink: 0;
     }
 
@@ -221,7 +223,7 @@
       width: 7px;
       height: 7px;
       border-radius: 50%;
-      background-color: #2e7d32;
+      background-color: var(--brand-leaf);
       box-shadow: 0 0 0 2px var(--color-primary-light);
       display: inline-block;
       animation: pulseGreen 2.5s infinite;
@@ -429,12 +431,12 @@
       width: 36px;
       height: 36px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #2e7d32, #43a047);
+      background: linear-gradient(135deg, #0E5A45, #0B7B8C);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      box-shadow: 0 2px 6px rgba(46, 125, 50, 0.25);
+      box-shadow: 0 2px 6px rgba(14, 90, 69, 0.25);
     }
 
     .avatar-bot svg {
@@ -755,7 +757,7 @@
       cursor: pointer;
       flex-shrink: 0;
       transition: all 0.2s ease;
-      box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
+      box-shadow: 0 2px 8px rgba(14, 90, 69, 0.3);
     }
 
     .btn-send:hover:not(:disabled) {
@@ -982,7 +984,7 @@
       align-self: center;
     }
   </style>
-  <link rel="icon" type="image/svg+xml" href="/static/img/favicon.svg">
+  <link rel="icon" type="image/png" href="/static/img/favicon.png">
   <link rel="stylesheet" href="/static/css/brand.css">
 </head>
 <body class="page-chat">
@@ -996,7 +998,7 @@
       <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
     </svg>
     <span>
-      <span class="notice-full">AgriBot chưa đọc được số liệu mô phỏng của Trụ ADN. Hãy mô tả số liệu bạn thấy trong câu hỏi.</span>
+      <span class="notice-full">AgriBot chưa đọc được số liệu mô phỏng của Tháp ADN. Hãy mô tả số liệu bạn thấy trong câu hỏi.</span>
       <span class="notice-short">AgriBot chưa đọc được số liệu mô phỏng.</span>
       <a href="/dashboard">Xem bảng điều khiển →</a>
     </span>
@@ -1015,7 +1017,7 @@
       <div>
         <h2 class="chat-sidebar__title">Gợi ý câu hỏi</h2>
         <ul class="chat-sidebar__list" role="list">
-          {# Bấm vào sẽ điền câu hỏi vào ô nhập (chưa gửi). Các câu khớp với cấu tạo trong bản vẽ Trụ ADN. #}
+          {# Bấm vào sẽ điền câu hỏi vào ô nhập (chưa gửi). Các câu khớp với cấu tạo trong bản vẽ Tháp ADN. #}
           {% for q in [
             "Rau ăn lá nên giữ độ ẩm đất khoảng bao nhiêu?",
             "Tưới 2–3 lần/ngày, mỗi lần 3–5 phút có hợp lý không?",
@@ -1029,12 +1031,12 @@
       </div>
 
       <div>
-        <h2 class="chat-sidebar__title">Trụ ADN</h2>
+        <h2 class="chat-sidebar__title">Tháp ADN</h2>
         <a class="chat-sidebar__link" href="/dashboard">Bảng điều khiển &amp; mô phỏng →</a>
       </div>
 
       <p class="chat-sidebar__note">AgriBot chỉ lưu <strong>một</strong> cuộc trò chuyện trên trình duyệt này. Bấm "Cuộc trò chuyện mới" sẽ xóa cuộc hiện tại.</p>
-      <p class="chat-sidebar__tagline">Một góc ban công, một vòng tuần hoàn</p>
+      <p class="chat-sidebar__tagline">Hệ sinh thái tuần hoàn trong tầm tay</p>
     </aside>
     <div id="sidebar-backdrop" class="sidebar-backdrop" hidden></div>
 
@@ -1049,8 +1051,8 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
         </button>
         <div class="brand-icon-wrapper" aria-hidden="true">
-          <!-- Huy hiệu tròn của bộ nhận diện Trụ ADN -->
-          <img src="/static/img/favicon.svg" alt="" width="42" height="42">
+          <!-- Huy hiệu tròn của bộ nhận diện Tháp ADN -->
+          <img src="/static/img/logo-nav.png" alt="" height="30">
         </div>
         <div class="brand-meta">
           <h1 class="brand-title">AgriBot – Trợ lý nông nghiệp</h1>
@@ -1225,7 +1227,7 @@
       // ======================================================================
 
       // Icon chiếc lá SVG dùng chung cho bot
-      // Hình hai lá của bộ nhận diện Trụ ADN (một màu, dùng fill của phần tử cha)
+      // Hình hai lá của bộ nhận diện Tháp ADN (một màu, dùng fill của phần tử cha)
       const LEAF_SVG = `
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M12 21C6 20 3 14 4 6C10 6 13 12 12 21Z"/>
@@ -1245,7 +1247,7 @@
           <p class="welcome-desc">
             Trợ lý AI chuyên hỗ trợ kỹ thuật canh tác, chẩn đoán sâu bệnh hại và tư vấn dinh dưỡng cho cây trồng tại Việt Nam.
           </p>
-          <p class="brand-tagline">Một góc ban công, một vòng tuần hoàn</p>
+          <p class="brand-tagline">Hệ sinh thái tuần hoàn trong tầm tay</p>
           <div class="suggestions-header">Gợi ý câu hỏi phổ biến:</div>
           <div class="suggestions-grid" id="suggestions-grid"></div>
         `;

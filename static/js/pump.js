@@ -15,6 +15,7 @@
   let connected = false;
   let online = false;
   let reportedState = null;
+  let lastStatusRaw = null;  // status mới nhất nhận được, chỉ hiển thị khi thiết bị đang online
   let runningSince = null;
   let maxRunMs = null;
   let pending = null;
@@ -171,6 +172,7 @@
       deviceState.textContent = online ? "Đang trực tuyến" : "Ngoại tuyến";
       addLog("ESP32 " + (online ? "trực tuyến" : "ngoại tuyến"));
       if (!online) {
+        lastStatusRaw = null;
         reportedState = null;
         pumpState.textContent = "CHƯA RÕ";
         pumpState.classList.remove("is-on");
@@ -178,8 +180,12 @@
         updateTimers();
       }
       updateButtons();
+      // Tin retained có thể đến trước tin "online": hiển thị lại status đã giữ.
+      if (online && lastStatusRaw !== null) showStatus(lastStatusRaw);
     } else if (topic === "adn/pump/status") {
-      showStatus(value);
+      // Bỏ qua status khi thiết bị offline (tin retained cũ đến sau tin "offline").
+      if (parseStatus(value)) lastStatusRaw = value;
+      if (online) showStatus(value);
     }
   });
 })();

@@ -3,13 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Máy bơm thật · Trụ ADN</title>
+  <title>Máy bơm thật · Tháp ADN</title>
   <meta name="description" content="Điều khiển máy bơm thật qua ESP32 và MQTT.">
   <link rel="stylesheet" href="/static/css/nav.css">
   <link rel="stylesheet" href="/static/css/style.css">
   <link rel="stylesheet" href="/static/css/brand.css">
   <link rel="stylesheet" href="/static/css/pump.css">
-  <link rel="icon" type="image/svg+xml" href="/static/img/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="/static/img/favicon.png">
 </head>
 <body>
   {% set active_page = 'pump' %}
@@ -58,7 +60,7 @@
       configured: {{ mqtt_configured|tojson }}
     };
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/mqtt@5.10.4/dist/mqtt.min.js" defer></script>
+  <script src="/static/js/vendor/mqtt.min.js" defer></script>
   <script src="/static/js/pump.js" defer></script>
 </body>
 </html>

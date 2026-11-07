@@ -1,5 +1,5 @@
 .pump-banner { background: #e8f5e9; border-color: #a5d6a7; }
-.pump-real-badge { background: #1b5e20; color: #fff; }
+.pump-real-badge { background: #0E5A45; color: #fff; }
 .pump-layout { max-width: 960px; margin: 0 auto; padding: 16px; display: grid; gap: 16px; }
 .pump-card { min-width: 0; }
 .pump-card__heading { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px; }

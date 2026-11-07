@@ -1,18 +1,20 @@
 /* ==========================================================================
-   brand.css – Bộ nhận diện TRỤ ADN: "Một góc ban công, một vòng tuần hoàn"
+   brand.css – Bộ nhận diện THÁP ADN: "Hệ sinh thái tuần hoàn trong tầm tay"
    Nạp SAU các CSS khác của từng trang để ghi đè biến màu.
-   Bảng màu: xanh đậm #236044 · xanh non #88B95A · kem #F6F4EB · xanh nhạt #DDE8D4 · nâu đất #8A6A4D
-   Phong cách: đồ họa phẳng (không đổ bóng, không chuyển màu), gần gũi làm vườn đô thị.
+   Bảng màu: xanh rừng #0E5A45 · xanh biển #0B7B8C · xanh lá tươi #5FAF47 · xanh lá nhạt #DCEFD8 · kem #F7F9F3
+   Font: Be Vietnam Pro (tiêu đề) + Inter (nội dung).
    Màu nước (xanh dương) và màu trạng thái (đỏ/cam) giữ nguyên vì mang ý nghĩa dữ liệu.
    ========================================================================== */
 :root {
-  --brand-deep: #236044;
-  --brand-deep-2: #1B4D37;     /* dẫn xuất: bản đậm hơn để hover / chữ tiêu đề */
-  --brand-leaf: #88B95A;
-  --brand-cream: #F6F4EB;
-  --brand-pale: #DDE8D4;
+  --brand-deep:  #0E5A45;   /* xanh rừng (cũ #236044) */
+  --brand-deep-2:#0A4636;   /* bản đậm hơn, tự chọn cho hover */
+  --brand-leaf:  #5FAF47;   /* xanh lá tươi (cũ #88B95A) */
+  --brand-cream: #F7F9F3;   /* nền (cũ #F6F4EB) */
+  --brand-pale:  #DCEFD8;   /* xanh lá nhạt (cũ #DDE8D4) */
+  --brand-line:  #CFE3CB;   /* viền, tự chọn */  
+  --brand-teal: #0B7B8C;
+  --brand-gradient: linear-gradient(90deg, #5FAF47, #0B7B8C); 
   --brand-earth: #8A6A4D;
-  --brand-line: #D3DEC8;       /* dẫn xuất: đường viền nhạt hợp với xanh nhạt */
 
   /* biến của bảng điều khiển (style.css) */
   --green: var(--brand-deep);
@@ -20,7 +22,7 @@
   --green-soft: var(--brand-pale);
   --bg: var(--brand-cream);
   --border: var(--brand-line);
-  --brown: var(--brand-earth);
+  --brown: var(--brand-teal);
   --muted: #5C6A57;
 
   /* biến của trang chatbot (index.html) */
@@ -35,37 +37,26 @@
   --color-border-hover: #B9CBAA;
   --color-bubble-bot-border: var(--brand-line);
   --color-bubble-user: var(--brand-deep);
-  --color-focus: rgba(35, 96, 68, 0.4);
+  --color-focus: rgba(14, 90, 69, 0.4);
   --shadow-sm: none;
   --shadow-md: none;
-  --shadow-lg: 0 6px 18px rgba(35, 96, 68, 0.18);
+  --shadow-lg: 0 6px 18px rgba(14, 90, 69, 0.18);
 }
 
+h1, h2, h3, .site-nav__logo-text { font-family: "Be Vietnam Pro", Inter, system-ui, sans-serif; }
 /* Nền trang: dashboard luôn nền kem (chưa có chế độ tối); trang chatbot theo biến nền sáng/tối của nó */
 body { background: var(--brand-cream); }
 body.page-chat { background: var(--color-bg-app); }
 
 /* ---------------------------------------------------------------- thanh điều hướng
-   Nền xanh đậm phẳng + viền dưới xanh non; logo dùng bản màu nền tối */
+   Nền xanh đậm phẳng + viền dưới xanh non; logo dùng bản trắng đơn sắc */
 .site-nav {
   background: var(--brand-deep);
   box-shadow: none;
   border-bottom: 3px solid var(--brand-leaf);
 }
 .site-nav__logo-icon { width: auto; height: auto; background: none; border-radius: 0; }
-.site-nav .logo-mark {
-  width: auto;
-  height: 40px;
-  display: block;
-  --lg-leaf-a: var(--brand-cream);
-  --lg-leaf-b: var(--brand-leaf);
-  --lg-s1: var(--brand-pale);
-  --lg-s2: var(--brand-leaf);
-  --lg-ring: var(--brand-cream);
-  --lg-gap: var(--brand-deep);
-  --lg-vein: var(--brand-deep);
-  --lg-vein-b: var(--brand-deep);
-}
+.site-nav__logo-icon img { height: 40px; width: auto; display: block; }
 .site-nav__logo-text { font-weight: 900; letter-spacing: 0.07em; font-size: 1.08rem; }
 .site-nav__logo-sub { color: var(--brand-pale); opacity: 0.9; }
 .site-nav__link--active { background: var(--brand-leaf); color: var(--brand-deep-2); }
@@ -84,14 +75,14 @@ body.page-chat { background: var(--color-bg-app); }
   margin: 2px 0 6px;
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--brand-earth);
+  color: var(--brand-teal);
 }
 .sim-banner {
   position: relative;
   overflow: hidden;
   background: #fff;
   border: 1px solid var(--brand-line);
-  border-left: 6px solid var(--brand-earth);
+  border-left: 6px solid var(--brand-teal);
   border-radius: 14px;
 }
 .sim-banner::after {
@@ -122,10 +113,10 @@ body.page-chat { background: var(--color-bg-app); }
   }
 }
 .sim-banner h1 { color: var(--brand-deep); font-weight: 900; letter-spacing: 0.03em; }
-.sim-banner h1 .sub { color: var(--brand-earth); font-weight: 600; letter-spacing: 0; }
+.sim-banner h1 .sub { color: var(--brand-teal); font-weight: 600; letter-spacing: 0; }
 .sim-banner p { color: #5A4632; }
-.sim-banner p.brand-tagline { color: var(--brand-earth); }
-.badge-sim { background: var(--brand-earth); color: var(--brand-cream); }
+.sim-banner p.brand-tagline { color: var(--brand-teal); }
+.badge-sim { background: var(--brand-teal); color: var(--brand-cream); }
 
 /* ---------------------------------------------------------------- thẻ, nút, số liệu (phẳng) */
 .card, .chart-card, .agribot-panel { box-shadow: none; border-color: var(--brand-line); border-radius: 16px; }
@@ -173,7 +164,7 @@ body.page-chat { background: var(--color-bg-app); }
 .agribot-panel__disclaimer { background: var(--brand-pale); border-left-color: var(--brand-leaf); }
 .agribot-panel__disclaimer a { color: var(--brand-deep); }
 
-/* ---------------------------------------------------------------- sơ đồ Trụ ADN (SVG) */
+/* ---------------------------------------------------------------- sơ đồ Tháp ADN (SVG) */
 .step .box { fill: var(--brand-cream); stroke: var(--brand-earth); }
 .step .soil { fill: var(--brand-earth); opacity: 0.45; }
 .step .plant { fill: var(--brand-leaf); stroke: var(--brand-deep); stroke-width: 1.2; }
@@ -291,7 +282,7 @@ body.page-chat { background: var(--color-bg-app); }
 }
 .chat-sidebar__link:hover { background: var(--color-primary-light); }
 .chat-sidebar__note { margin: 0; font-size: 0.75rem; line-height: 1.5; color: var(--color-text-muted); }
-.chat-sidebar__tagline { margin: auto 0 0; font-size: 0.78rem; font-weight: 600; color: var(--brand-earth); }
+.chat-sidebar__tagline { margin: auto 0 0; font-size: 0.78rem; font-weight: 600; color: var(--brand-teal); }
 .chat-sidebar__new:focus-visible, .chat-sidebar__item:focus-visible, .chat-sidebar__link:focus-visible,
 .sidebar-toggle:focus-visible { outline: 2px solid var(--brand-leaf); outline-offset: 2px; }
 
@@ -349,7 +340,7 @@ body.page-chat { background: var(--color-bg-app); }
 @media (prefers-color-scheme: dark) {
   :root {
     --color-primary: var(--brand-deep);
-    --color-primary-hover: #2E7A56;
+    --color-primary-hover: #1B7A5E;
     --color-primary-light: #1B2E23;
     --color-primary-subtle: #17261D;
     --color-accent: var(--brand-leaf);
@@ -362,7 +353,7 @@ body.page-chat { background: var(--color-bg-app); }
     --color-bubble-bot: #16231B;
     --color-bubble-bot-border: #2A3D31;
     --color-bubble-user: var(--brand-deep);
-    --color-focus: rgba(136, 185, 90, 0.5);
+    --color-focus: rgba(95, 175, 71, 0.5);
     --shadow-lg: 0 6px 18px rgba(0, 0, 0, 0.5);
   }
   /* thanh cuộn và ô nhập theo chế độ tối (chỉ trang chatbot) */

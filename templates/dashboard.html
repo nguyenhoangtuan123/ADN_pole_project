@@ -3,11 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Giám sát · Trụ ADN</title>
-  <meta name="description" content="Bảng điều khiển mô phỏng Trụ ADN Ø600 – giám sát, điều khiển bơm/van, lịch hẹn giờ, biểu đồ và nhật ký vận hành (DEMO MODE).">
+  <title>Giám sát · Tháp ADN</title>
+  <meta name="description" content="Bảng điều khiển mô phỏng Tháp ADN Ø600 – giám sát, điều khiển bơm/van, lịch hẹn giờ, biểu đồ và nhật ký vận hành (DEMO MODE).">
   <link rel="stylesheet" href="/static/css/nav.css">
   <link rel="stylesheet" href="/static/css/style.css">
-  <link rel="icon" type="image/svg+xml" href="/static/img/favicon.svg">
+  <link rel="icon" type="image/png" href="/static/img/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/css/brand.css">
 </head>
 <body>
@@ -60,8 +62,8 @@
   {# Nhãn dữ liệu mô phỏng và tiêu đề trang (h1) #}
   <header class="sim-banner">
     <div class="sim-banner__text">
-      <h1>TRỤ ADN Ø600 – 24 bậc <span class="sub">Digital Twin</span></h1>
-      <p class="brand-tagline">Một góc ban công, một vòng tuần hoàn</p>
+      <h1>THÁP ADN Ø600 – 24 bậc <span class="sub">Digital Twin</span></h1>
+      <p class="brand-tagline">Hệ sinh thái tuần hoàn trong tầm tay</p>
       <p>Mô phỏng theo bộ bản vẽ ADN-600 (16 tờ). Hình học lấy từ bản vẽ; các hệ số vật lý là <strong>giả định</strong> và toàn bộ số liệu là <strong>MÔ PHỎNG</strong>, không phải số đo thật.</p>
     </div>
     <span class="badge badge-sim" title="Dữ liệu sinh từ mô hình Python, chưa phải số đo thật">DEMO MODE · MÔ PHỎNG</span>
@@ -70,10 +72,10 @@
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 
   <main class="layout">
-    <!-- ================= SƠ ĐỒ TRỤ ADN ================= -->
-    <section id="section-diagram" class="card diagram-card" aria-label="Sơ đồ Trụ ADN">
+    <!-- ================= SƠ ĐỒ THÁP ADN ================= -->
+    <section id="section-diagram" class="card diagram-card" aria-label="Sơ đồ Tháp ADN">
       <h2>Sơ đồ nguyên lý tuần hoàn nước <span class="muted">(2 sợi so le 180° × 12 bậc · bấm vào bậc để xem chi tiết)</span></h2>
-      <svg id="tower" viewBox="0 0 760 1000" role="img" aria-label="Trụ ADN hai sợi A và B, mỗi sợi 12 bậc, nước chảy từ bậc 12 xuống bậc 1 rồi về bể">
+      <svg id="tower" viewBox="0 0 760 1000" role="img" aria-label="Tháp ADN hai sợi A và B, mỗi sợi 12 bậc, nước chảy từ bậc 12 xuống bậc 1 rồi về bể">
         <!-- Tiêu đề hai sợi -->
         <text x="250" y="86" text-anchor="middle" class="strand-title">SỢI A</text>
         <text x="510" y="86" text-anchor="middle" class="strand-title">SỢI B</text>
@@ -239,7 +241,7 @@
           {% endfor %}
         </div>
         <p class="agribot-panel__disclaimer">
-          ⚠️ AgriBot chưa đọc được số liệu mô phỏng của Trụ ADN. Hãy mô tả số liệu bạn thấy trong câu hỏi khi cần.
+          ⚠️ AgriBot chưa đọc được số liệu mô phỏng của Tháp ADN. Hãy mô tả số liệu bạn thấy trong câu hỏi khi cần.
         </p>
       </section>
     </aside>

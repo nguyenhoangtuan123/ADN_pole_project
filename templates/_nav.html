@@ -8,13 +8,13 @@
 
 <nav class="site-nav" aria-label="Điều hướng chính">
   {# --- Logo / Brand --- #}
-  <a class="site-nav__logo" href="/dashboard" aria-label="Trụ ADN – về trang giám sát">
+  <a class="site-nav__logo" href="/dashboard" aria-label="Tháp ADN – về trang giám sát">
     <span class="site-nav__logo-icon" aria-hidden="true">
-      {# Dấu hiệu logo Trụ ADN: hai lá, thân xoắn kép, vòng đế #}
-      {% include "_logo_mark.html" %}
+      {# Dấu hiệu logo Tháp ADN (bản trắng đơn sắc dành cho nền xanh đậm) #}
+      <img src="/static/img/logo-nav.png" alt="" height="40">
     </span>
     <span>
-      <span class="site-nav__logo-text">TRỤ ADN</span>
+      <span class="site-nav__logo-text">THÁP ADN</span>
       <span class="site-nav__logo-sub">Digital Twin</span>
     </span>
   </a>
@@ -25,7 +25,7 @@
       <a href="/dashboard"
          class="site-nav__link{% if active_page == 'dashboard' %} site-nav__link--active{% endif %}"
          {% if active_page == 'dashboard' %}aria-current="page"{% endif %}
-         aria-label="Trụ ADN – giám sát và điều khiển">
+         aria-label="Tháp ADN – giám sát và điều khiển">
         {# Icon bảng điều khiển #}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
